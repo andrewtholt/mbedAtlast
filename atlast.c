@@ -45,10 +45,13 @@
 // 
 // Socket includes
 //
+#ifdef SOCKETS
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif
+
 #endif
 #ifdef PTHREAD
 #include <pthread.h>
@@ -793,7 +796,7 @@ prim ATH_on() {
 prim ATH_off() {
     Push=0;
 }
-
+#ifdef SOCKETS
 prim athConnect() {
     char           *hostName;
     int             len, port;
@@ -897,7 +900,7 @@ prim athRecv() {
     n = recv(sock2, msg, len, 0);
     Push = n;
 }
-
+#endif
 // 
 // Add \n to a string
 // Stack : pointer -- pointer
@@ -5563,6 +5566,13 @@ static struct primfcn primt[] = {
     {"0FSEEK", P_fseek},
     {"0FLOAD", P_fload},
     {"0$INCLUDE", P_include},
+    {(char *)"0PWD", ATH_pwd},
+    {(char *)"0CD", ATH_cd},
+    {(char *)"0DIR", RT_dir},
+    {(char *)"0TOUCH", RT_touch},
+    {(char *)"0MKFILE", RT_mkfile},
+    {(char *)"0CRCFILE", RT_crcfile},
+    {(char *)"0TEST", RT_test},
 #endif /* FILEIO */
 
 #ifdef EVALUATE
@@ -5570,6 +5580,7 @@ static struct primfcn primt[] = {
 #endif /* EVALUATE */
 
 #ifdef ATH
+#ifdef SOCKETS
 	{(char *)"0SOCKET-CONNECT",athConnect},
 	{(char *)"0SOCKET-CLOSE",athClose},
 	{(char *)"0SOCKET-SEND",athSend},
@@ -5577,7 +5588,7 @@ static struct primfcn primt[] = {
 	{(char *)"0ADD-EOL",athAddEOL},
 	{(char *)"0CMD-GET",athCmdGet},
 	{(char *)"0CMD-SET",athCmdSet},
-
+#endif
 	{(char *)"0ON",ATH_on},
 	{(char *)"0OFF",ATH_off},
 	{(char *)"0MKBUFFER",ATH_mkBuffer},
@@ -5594,22 +5605,11 @@ static struct primfcn primt[] = {
 	{(char *)"0DECIMAL",ATH_dec},
 	{(char *)"0BYE",ATH_bye},
 	{(char *)"0?FILEIO",ATH_qfileio},
-//    {(char *)"0.FEATURES", ATH_Features},
     {(char *)"0TIB", ATH_Instream},
 //    {(char *)"0TOKEN", ATH_Token},
     {(char *)"0?LINUX", ATH_qlinux},
     {(char *)"0?FREERTOS", ATH_qfreertos},
     {(char *)"0MS", ATH_ms},
-    {(char *)"0PWD", ATH_pwd},
-    {(char *)"0CD", ATH_cd},
-    {(char *)"0DIR", RT_dir},
-    {(char *)"0TOUCH", RT_touch},
-    {(char *)"0MKFILE", RT_mkfile},
-    {(char *)"0CRCFILE", RT_crcfile},
-    {(char *)"0TEST", RT_test},
-    {(char *)"0ERRNO", ATH_errno},
-    {(char *)"0HELP", ATH_help},
-    {(char *)"0BANNER", ATH_banner},
 
 #endif
     {(char *)"0.FEATURES", ATH_Features},
