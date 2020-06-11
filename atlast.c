@@ -12,7 +12,6 @@
 
 */
 #include <errno.h>
-
 #ifdef FREERTOS
 #include "tim.h"
 #include "FreeRTOS.h"
@@ -340,154 +339,154 @@ void ATH_Features() {
 #ifdef ARRAY
     usbTxString((char *)"\n    ARRAY\r\n");
 #else
-    printf("\nNOT ARRAY\r\n");
+    usbTxString((char *)"\nNOT ARRAY\r\n");
 #endif
 
 #ifdef EMBEDDED
-    printf("    EMBEDDED\r\n");
+    usbTxString((char *)"    EMBEDDED\r\n");
 #else
-    printf("NOT EMBEDDED\r\n");
+    usbTxString((char *)"NOT EMBEDDED\r\n");
 #endif
 
 #ifdef BREAK
-    printf("    BREAK\r\n");
+    usbTxString((char *)"    BREAK\r\n");
 #else
-    printf"NOT BREAK\r\n");
+    usbTxString((char *)"NOT BREAK\r\n");
 #endif
 //
 #ifdef COMPILERW
-    printf("    COMPILERW\r\n");
+    usbTxString((char *)"    COMPILERW\r\n");
 #else
-    printf("NOT COMPILERW\r\n");
+    usbTxString((char *)"NOT COMPILERW\r\n");
 #endif
 
 #ifdef CONIO
-    printf("    CONIO\r\n");
+    usbTxString((char *)"    CONIO\r\n");
 #else
-    printf("NOT CONIO\r\n");
+    usbTxString((char *)"NOT CONIO\r\n");
 #endif
 
 #ifdef DEFFIELDS
-    printf("    DEFFIELDS\r\n");
+    usbTxString((char *)"    DEFFIELDS\r\n");
 #else
-    printf("NOT DEFFIELDS\r\n");
+    usbTxString((char *)"NOT DEFFIELDS\r\n");
 #endif
 
 #ifdef DOUBLE
-    printf("    DOUBLE\r\n");
+    usbTxString((char *)"    DOUBLE\r\n");
 #else
-    printf("NOT DOUBLE\r\n");
+    usbTxString((char *)"NOT DOUBLE\r\n");
 #endif
 
 #ifdef EVALUATE
-    printf("    EVALUATE\r\n");
+    usbTxString((char *)"    EVALUATE\r\n");
 #else
-    printf("NOT EVALUATE\r\n");
+    usbTxString((char *)"NOT EVALUATE\r\n");
 #endif
 
 #ifdef FILEIO
-    printf("    FILEIO\r\n");
+    usbTxString((char *)"    FILEIO\r\n");
 #else
-    printf("NOT FILEIO\r\n");
+    usbTxString((char *)"NOT FILEIO\r\n");
 #endif
 
 #ifdef MATH
-    printf("    MATH\r\n");
+    usbTxString((char *)"    MATH\r\n");
 #else
-    printf("NOT MATH\r\n");
+    usbTxString((char *)"NOT MATH\r\n");
 #endif
 
 #ifdef MEMMESSAGE
-    printf("    MEMMESSAGE\r\n");
+    usbTxString((char *)"    MEMMESSAGE\r\n");
 #else
-    printf("NOT MEMMESSAGE\r\n");
+    usbTxString((char *)"NOT MEMMESSAGE\r\n");
 #endif
 
 #ifdef PROLOGUE
-    printf("    PROLOGUE\r\n");
+    usbTxString((char *)"    PROLOGUE\r\n");
 #else
-    printf("NOT PROLOGUE\r\n");
+    usbTxString((char *)"NOT PROLOGUE\r\n");
 #endif
 
 #ifdef REAL
-    printf("    REAL\r\n");
+    usbTxString((char *)"    REAL\r\n");
 #else
-    printf("NOT REAL\r\n");
+    usbTxString((char *)"NOT REAL\r\n");
 #endif
 
 #ifdef SHORTCUTA
-    printf("    SHORTCUTA\r\n");
+    usbTxString((char *)"    SHORTCUTA\r\n");
 #else
-    printf("NOT SHORTCUTA\r\n");
+    usbTxString((char *)"NOT SHORTCUTA\r\n");
 #endif
 
 #ifdef SHORTCUTC
-    printf("    SHORTCUTC\r\n");
+    usbTxString((char *)"    SHORTCUTC\r\n");
 #else
-    printf("NOT SHORTCUTC\r\n");
+    usbTxString((char *)"NOT SHORTCUTC\r\n");
 #endif
 
 #ifdef STRING
-    printf("    STRING\r\n");
+    usbTxString((char *)"    STRING\r\n");
 #else
-    printf("NOT STRING\r\n");
+    usbTxString((char *)"NOT STRING\r\n");
 #endif
 
 #ifdef SYSTEM
-    printf("    SYSTEM\r\n");
+    usbTxString((char *)"    SYSTEM\r\n");
 #else
-    printf("NOT SYSTEM\r\n");
+    usbTxString((char *)"NOT SYSTEM\r\n");
 #endif
 
 #ifdef TRACE
-    printf("    TRACE\r\n");
+    usbTxString((char *)"    TRACE\r\n");
 #else
-    printf("NOT TRACE\r\n");
+    usbTxString((char *)"NOT TRACE\r\n");
 #endif
 
 #ifdef WALKBACK
-    printf("    WALKBACK\r\n");
+    usbTxString((char *)"    WALKBACK\r\n");
 #else
-    printf("NOT WALKBACK\r\n");
+    usbTxString((char *)"NOT WALKBACK\r\n");
 #endif
 
 #ifdef WORDSUSED
-    printf("    WORDSUSED\r\n");
+    usbTxString((char *)"    WORDSUSED\r\n");
 #else
-    printf("NOT WORDSUSED\r\n");
+    usbTxString((char *)"NOT WORDSUSED\r\n");
 #endif 
 
 // ------------------
 #ifdef ATH
-    printf("\r\n    ATH CUSTOM\r\n");
+    usbTxString((char *)"\r\n    ATH CUSTOM\r\n");
 #else
-    printf("\r\nNOT ATH CUSTOM\r\n");
+    usbTxString((char *)"\r\nNOT ATH CUSTOM\r\n");
 #endif
 // ------------------
 #ifdef PUBSUB
-    printf("    PUBSUB\r\n");
+    usbTxString((char *)"    PUBSUB\r\n");
 #else
-    printf("NOT PUBSUB\r\n");
+    usbTxString((char *)"NOT PUBSUB\r\n");
 #endif
 //
 #ifdef MQTT
-    printf("    MQTT\r\n");
+    usbTxString((char *)"    MQTT\r\n");
 #else
-    printf("NOT MQTT\r\n");
+    usbTxString((char *)"NOT MQTT\r\n");
 #endif
 //
 // ------------------
 
 #ifdef FREERTOS
-    printf("    FREERTOS\r\n");
+    usbTxString((char *)"    FREERTOS\r\n");
 #else
-    printf("NOT FREERTOS\r\n");
+    usbTxString((char *)"NOT FREERTOS\r\n");
 #endif
 
 #ifdef ANSI
-    printf("    ANSI\r\n");
+    usbTxString((char *)"    ANSI\r\n");
 #else
-    printf("NOT ANSI\r\n");
+    usbTxString((char *)"NOT ANSI\r\n");
 #endif
 }
 #ifdef ATH
@@ -554,47 +553,35 @@ prim ATH_banner() {
 		memset(msgBuffer,0,80);
 
 		strcpy ((char *)msgBuffer, (char *)"\r\nBased on ATLAST 1.2 (2007-10-07)\n");
+#ifdef MBED
+        usbTxString((char *)msgBuffer);
+#endif
 #ifdef FREERTOS
 		atlastTxBuffer(NULL,msgBuffer);
 		vTaskDelay(1);
-#endif
-
-#ifdef LINUX
-		printf("%s",msgBuffer);
 #endif
 
 		strcpy((char *)msgBuffer, (char *)"\rThe original version of this program is in the public domain.\n");
+#ifdef MBED
+        usbTxString((char *)msgBuffer);
+#endif
 #ifdef FREERTOS
 		atlastTxBuffer(NULL,msgBuffer);
 		vTaskDelay(1);
 #endif
-
-#ifdef LINUX
-		printf("%s",msgBuffer);
-#endif
-
-		strcpy((char *)msgBuffer, (char *)"\rModifications for FreeRTOS are the property of Elcometer Ltd.\r\n");
-#ifdef FREERTOS
-		atlastTxBuffer(NULL, (char *)msgBuffer);
-		vTaskDelay(1);
-#endif
-
-#ifdef LINUX
-		printf("%s",msgBuffer);
-#endif
-
 		strcpy((char *)msgBuffer,"\r\nCompiled: " );
 		strcat((char *)msgBuffer, __DATE__);
 		strcat((char *)msgBuffer," ");
 		strcat((char *)msgBuffer, __TIME__);
 		strcat((char *)msgBuffer,"\r\n");
 
+#ifdef MBED
+        usbTxString((char *)msgBuffer);
+#endif
+
 #ifdef FREERTOS
 		atlastTxBuffer(NULL, (char *)msgBuffer);
 		vTaskDelay(1);
-#endif
-#ifdef LINUX
-		printf("%s",msgBuffer);
 #endif
 }
 
@@ -767,26 +754,31 @@ prim ATH_qmemsafe() {
 //
 void displayLineHex(uint8_t *a) {
 	int i;
+    char buffer[8];
 
 	for(i=0;i<16;i++) {
-		printf(" %02x",*(a++));
+        sprintf(buffer," %02x",*(a++));
+        usbTxString(buffer);
 	}
 }
 
 void displayLineAscii(uint8_t *a) {
 	int i;
 
-	printf(":");
+    usbTxByte(':');
 
 	for(i=0;i<16;i++) {
 		if( (*a < 0x20 ) || (*a > 0x80 )) {
-			printf(".");
+            usbTxByte('.');
+//			printf(".");
 			a++;
 		} else {
-			printf("%c",*(a++));
+            usbTxByte(*(a++));
+//			printf("%c",*(a++));
 		}
 	}
-	printf("\r\n");
+    usbTxByte('\r');
+    usbTxByte('\n');
 }
 
 prim ATH_on() {
@@ -974,13 +966,23 @@ prim ATH_dump() {
     if(lines ==0 ) {
         lines=1;
     }
+#ifdef MBED
+    usbTxByte('\r');
+    usbTxByte('\n');
+#endif
+
 #ifdef FREERTOS
     atlastTxBuffer(console, (uint8_t *)"\r\n") ;
 #endif
 
     int i=0;
+    char buffer[16];
     for( i = 0; i<length;i+=16) {
-        printf("%08x:", (uintptr_t)address);
+//        printf("%08x:", (uintptr_t)address);
+    #ifdef MBED
+        sprintf(buffer,"%08x:", (uintptr_t)address);
+        usbTxString((char *)buffer);
+    #endif
         displayLineHex( address );
         displayLineAscii( address );
         address +=16;
@@ -2092,18 +2094,21 @@ prim FR_displayRecord() {
 
     rec=(struct nlist *)S0;
     sprintf(localBuffer,"Name      : %s\n", nlistGetName(rec));
-#ifdef LINUX
-    printf("%s",localBuffer);
-#else
+#ifdef MBED
+    usbTxString(localBuffer);
+#endif
+
+#ifdef FREERTOS
 	atlastTxBuffer(console, (uint8_t *)localBuffer) ;
 #endif
     sprintf(localBuffer,"Value     : %s\n", (char *)nlistGetDef(rec));
-#ifdef LINUX
-    printf("%s",localBuffer);
-#else
-	atlastTxBuffer(console, (uint8_t *)localBuffer) ;
+#ifdef MBED
+    usbTxString(localBuffer);
 #endif
 
+#ifdef FREERTOS
+	atlastTxBuffer(console, (uint8_t *)localBuffer) ;
+#endif
 
     sprintf(localBuffer, "Published :" );
 
@@ -2112,9 +2117,10 @@ prim FR_displayRecord() {
     } else {
         strcat(localBuffer,"False\n");
     }
-#ifdef LINUX
-    printf("%s",localBuffer);
-#else
+#ifdef MBED
+    usbTxString(localBuffer);
+#endif
+#ifdef FREERTOS
 	atlastTxBuffer(console, (uint8_t *)localBuffer) ;
 #endif
     Pop;
@@ -2197,9 +2203,13 @@ static char *alloc(unsigned int size) {
     char *cp = (char *)malloc(size);
 
     if (cp == NULL) {
-        
-        printf("\n\nOut of memory!  %u bytes requested.\n", size); // EMBEDDED
-        
+        char buffer[80];
+
+        sprintf(buffer,"\n\nOut of memory!  %u bytes requested.\n", size); // EMBEDDED
+
+#ifdef MBED
+        usbTxString(buffer);
+#endif
         abort();
     }
     return cp;
@@ -2312,7 +2322,10 @@ static int token( char **cp) {
         if (istring) {
             if (rstring) {
 #ifdef MEMMESSAGE
-                printf("\nRunaway string: %s\n", tokbuf); // EMBEDDED
+#ifdef MBED
+                char buffer[80];
+                sprintf(buffer,"\nRunaway string: %s\n", tokbuf); // EMBEDDED
+#endif
 #endif
                 evalstat = ATL_RUNSTRING;
                 return TokNull;
@@ -2616,31 +2629,41 @@ void atl_memstat() {
 */
     static char fmt[] = "\t%-13s|\t%3ld   |\t%6ld|\t%13ld|\t%3ld %%|\n";
 //    static char fmt[] = "\t%-12s %6ld    %6ld    %6ld       %3ld %%\r\n";
-    printf("\t+============+========+=======+==============+=======+\n");
-    printf("\t|Memory Area |  usage |  used |   allocated  |in use |\n");
-    printf("\t+============+========+=======+==============+=======+\n");
+
+    char buffer[80];
+    sprintf(buffer,"\n\t+============+========+=======+==============+=======+\n");
+    usbTxString(buffer);
+
+    sprintf(buffer,"\t|Memory Area |  usage |  used |   allocated  |in use |\n");
+    usbTxString(buffer);
+
+    sprintf(buffer,"\t+============+========+=======+==============+=======+\n");
+    usbTxString(buffer);
 
     int stack_pc = ( 100 * ((stk - stack)) ) / atl_stklen;
     int stack_used = stk - stack ;
     int stack_usage = (stackmax - stack);
 
-//    printf("stk=%d  stack=%d atl_stklen %d stack_pc %d\n", stk,stack,atl_stklen, stack_pc);
+    sprintf(buffer,fmt, "|Stack",stack_used, stack_usage,atl_stklen, stack_pc);
+    usbTxString(buffer);
 
-//    printf("\tStack\t\t%3d\t%6d\t%6d\t\t%3d %%\n",stack_used, stack_usage,atl_stklen, stack_pc);
-    printf(fmt, "|Stack",stack_used, stack_usage,atl_stklen, stack_pc);
-//    V printf(fmt, "Stack", ((long) (stackmax - stack)), (100L * (stk - stack)) / atl_stklen);
-
-    V printf(fmt, "|Return stack",
+    V sprintf(buffer,fmt, "|Return stack",
             ((long) (rstk - rstack)),
             ((long) (rstackmax - rstack)),
             atl_rstklen,
             (100L * (rstk - rstack)) / atl_rstklen);
-    V printf(fmt, "|Heap        ",
+    usbTxString(buffer);
+
+    V sprintf(buffer,fmt, "|Heap        ",
             ((long) (hptr - heap)),
             ((long) (heapmax - heap)),
             atl_heaplen,
             (100L * (hptr - heap)) / atl_heaplen);
-    printf("\t+============+========+=======+==============+=======+\n");
+    usbTxString(buffer);
+
+    sprintf(buffer,"\t+============+========+=======+==============+=======+\n");
+    usbTxString(buffer);
+
 }
 #endif /* MEMSTAT */
 
@@ -3290,7 +3313,11 @@ prim P_strlit() 		      /* Push address of string literal */
     Push = (stackitem) (((char *) ip) + 1);
 #ifdef TRACE
     if (atl_trace) {
-        printf("\"%s\" ", (((char *) ip) + 1)); // EMBEDDED
+#ifdef MBED
+        char buffer[80];
+        sprintf(buffer,"\"%s\" ", (((char *) ip) + 1)); // EMBEDDED
+        usbTxString(buffer);
+#endif
     }
 #endif /* TRACE */
     Skipstring; 		      /* Advance IP past it */
@@ -3499,7 +3526,12 @@ prim P_flit()			      /* Push floating point literal */
         atl_real tr;
 
         V memcpy((char *) &tr, (char *) ip, sizeof(atl_real));
-        V printf("%g ", tr);
+#ifdef MBED
+        char buffer[80];
+
+        sprintf(buffer,"%g ", tr);
+        usbTxString(buffer);
+#endif
     }
 #endif /* TRACE */
     for (i = 0; i < Realsize; i++) {
@@ -3631,7 +3663,10 @@ prim P_fdot()			      /* Print floating point top of stack */
 {
     Sl(Realsize);
     
-    V printf("%g ", REAL0);
+#ifdef MBED
+    char buffer[80];
+    sprintf(buffer,"%g ", REAL0);
+#endif
     
     Realpop;
 }
@@ -3746,7 +3781,9 @@ prim P_dot() {
         sprintf(buff,"%d",top);
     	break;
     }
-    printf("%s",buff);
+#ifdef MBED
+    usbTxString(buff);
+#endif
 
     Pop;
 }
@@ -3755,6 +3792,11 @@ prim P_question()		      /* Print value at address */
 {
     Sl(1);
     Hpc(S0);
+#ifdef MBED
+    char outBuffer[16];
+    sprintf(outBuffer,(base == 16 ? "%lX" : "%ld "), *((stackitem *) S0)); // EMBEDDED
+    usbTxString(outBuffer);
+#endif
 /*
 #ifdef EMBEDDED
 //    sprintf(outBuffer,(base == 16 ? "%lX" : "%ld "), *((stackitem *) S0)); // EMBEDDED
@@ -3771,24 +3813,34 @@ prim P_question()		      /* Print value at address */
 
 /* Carriage return */
 prim P_cr() {
-        printf("\n"); // EMBEDDED
+#ifdef MBED
+    usbTxByte('\n');
+#endif
 }
 
 /* Print entire contents of stack */
 prim P_dots() {
 	stackitem *tsp;
+    char outBuffer[16];
 
-	V printf("Stack: ");    // NOT EMBEDDED
+	sprintf(outBuffer,"\nStack: ");    // NOT EMBEDDED
+#ifdef MBED
+    usbTxString(outBuffer);
+#endif
 
 	if (stk == stackbot) {
 
-		printf("Empty.");  // EMBEDDED
+		sprintf(outBuffer,"Empty.");  // EMBEDDED
+#ifdef MBED
+        usbTxString(outBuffer);
+#endif
 
 	} else {
 		for (tsp = stack; tsp < stk; tsp++) {
-#ifdef EMBEDDED
 			// TODO If you change the stack size change this
-			printf((base == 16 ? "%lX " : "%ld "), *tsp); //  EMBEDDED
+			sprintf(outBuffer,(base == 16 ? "%lX " : "%ld "), *tsp); //  EMBEDDED
+#ifdef MBED
+        usbTxString(outBuffer);
 #endif
 		}
 	}
@@ -3801,13 +3853,17 @@ prim P_dotquote()		      /* Print literal string that follows */
     Compconst(s_dotparen);	      /* Compile .( word */
 }
 
-prim P_dotparen()		      /* Print literal string that follows */
-{
+/* Print literal string that follows */
+prim P_dotparen() {
+    char buffer[80];
     if (ip == NULL) {		      /* If interpreting */
         stringlit = True;	      /* Set to print next string constant */
     } else {			      /* Otherwise, */
         /* print string literal in in-line code. */
-        printf("%s", ((char *) ip) + 1);  // EMBEDDED
+        sprintf(buffer,"%s", ((char *) ip) + 1);  
+#ifdef MBED
+        usbTxString(outBuffer);
+#endif
         Skipstring;		      /* And advance IP past it */
     }
 }
@@ -3828,20 +3884,25 @@ prim P_emit() {
 /* Print string pointed to by stack */
 
 prim P_type() {
+    char buffer[80];
     Sl(1);
     
     if( ath_safe_memory == Truth) {
     	Hpc(S0);
     }
 
-    printf("%s", (char *) S0); // EMBEDDED
+    sprintf(buffer,"%s", (char *) S0);
+
+#ifdef MBED
+    usbTxString(buffer);
+#endif
 
     Pop;
 }
 
 prim ATH_sift() {
-//	char outBuffer[132];
-//	extern char *outBuffer;
+	char outBuffer[132];
+
     char *res=NULL;
 
     Sl(1);
@@ -3854,7 +3915,10 @@ prim ATH_sift() {
     while (dw != NULL) {
         res=strcasestr( dw->wname+1, name);
         if( res != NULL) {
-            printf("%s\n", dw->wname+1);
+            sprintf(outBuffer,"%s\n", dw->wname+1);
+#ifdef MBED
+            usbTxString(outBuffer);
+#endif
         }
         dw = dw->wnext;
     }
@@ -3875,8 +3939,7 @@ prim P_words() {
     	strcat(outBuffer,dw->wname+1);
 //    	strcat(outBuffer,"\r\n");
 
-//        sprintf(outBuffer,"\r\n%s", dw->wname + 1); // EMBEDDED
-    printf("%s",outBuffer);
+    usbTxString(outBuffer);
         
         dw = dw->wnext;
 #ifdef Keyhit
@@ -3891,7 +3954,7 @@ prim P_words() {
 #endif
     }
     sprintf(outBuffer,"\n"); // EMBEDDED
-     printf("%s",outBuffer);
+    usbTxString(outBuffer);
 }
 #endif /* CONIO */
 
@@ -4498,9 +4561,13 @@ prim P_dolit()			      /* Push instruction stream literal */
 {
     So(1);
 #ifdef TRACE
+    char outBuffer[16];
     if (atl_trace) {
 
-        printf("%ld ", (long) *ip); // NOT EMBEDDED
+        sprintf(outBuffer,"%ld ", (long) *ip);
+#ifdef MBED
+        usbTxString(outBuffer);
+#endif
 
     }
 #endif
@@ -4797,12 +4864,16 @@ prim P_abort()			      /* Abort, clearing data stack */
 {
     Sl(1);
     So(0);
+    char buffer[16];
 
     int flag=(int)S0;
     Pop;
 
     if ( flag != 0 ) {
-        printf("Aborting\n");
+        sprintf(buffer,"Aborting\n");
+#ifdef MBED
+        usbTxString(buffer);
+#endif
         P_clear();			      /* Clear the data stack */
         pwalkback();
         P_quit();			      /* Shut down execution */
@@ -4810,15 +4881,19 @@ prim P_abort()			      /* Abort, clearing data stack */
     }
 }
 
-prim P_abortq() 		      /* Abort, printing message */
-{
+/* Abort, printing message */
+prim P_abortq() {
+    char buffer[80];
     if (state) {
         stringlit = True;	      /* Set string literal expected */
         Compconst(s_abortq);	      /* Compile ourselves */
     } else {
         /* Otherwise, print string literal in in-line code. */
 
-        printf("%s", ((char *) ip) + 1);  // EMBEDDED
+        sprintf(buffer,"%s", ((char *) ip) + 1);  // EMBEDDED
+#ifdef MBED
+        usbTxString(buffer);
+#endif
         
 #ifdef WALKBACK
         pwalkback();
@@ -4954,6 +5029,7 @@ prim ATH_char() {
 /* Take address of next word */
 prim P_tick() {
     int i;
+    char buffer[132]; 
 
     /* Try to get next symbol from the input stream.  If
        we can't, and we're executing a compiled word,
@@ -4970,11 +5046,17 @@ prim P_tick() {
                 So(1);
                 Push = (stackitem) di; /* Push word compile address */
             } else {
-                printf(" '%s' undefined ", tokbuf); // EMBEDDED
+                sprintf(buffer," '%s' undefined ", tokbuf); // EMBEDDED
+#ifdef MBED
+                usbTxString(buffer);
+#endif
             }
         } else {
 
-            printf("\nWord not specified when expected.\n"); // EMBEDDED
+            sprintf(buffer,"\nWord not specified when expected.\n"); // EMBEDDED
+#ifdef MBED
+            usbTxString(buffer);
+#endif
             P_abort();
         }
     } else {
@@ -4986,7 +5068,10 @@ prim P_tick() {
             tickpend = True;	      /* Set tick pending */
         } else {
 
-            printf("\nWord requested by ` not on same input line.\n"); // EMBEDDED
+            sprintf(buffer,"\nWord requested by ` not on same input line.\n");
+#ifdef MBED
+            usbTxString(buffer);
+#endif
 
             P_abort();
         }
@@ -5054,10 +5139,15 @@ prim P_toname() 		      /* Find name field from compile addr */
     S0 += DfOff(wname);
 }
 
-prim P_tolink() 		      /* Find link field from compile addr */
-{
+    /* Find link field from compile addr */
+prim P_tolink() {
+    char buffer[80];
+
     if (DfOff(wnext) != 0) {
-        printf("\n>LINK Foulup--wnext is not at zero!\n");  // EMBEDDED
+        sprintf(buffer,"\n>LINK Foulup--wnext is not at zero!\n");
+#ifdef MBED
+        usbTxString(buffer);
+#endif
     }
     /*  Sl(1);
         S0 += DfOff(wnext);  */	      /* Null operation.  Wnext is first */
@@ -5075,11 +5165,15 @@ prim P_fromname()		      /* Get compile address from name */
     S0 -= DfOff(wname);
 }
 
-prim P_fromlink()		      /* Get compile address from link */
-{
-    if (DfOff(wnext) != 0) {
+/* Get compile address from link */
+prim P_fromlink() {
+    char buffer[40];
 
-        printf("\nLINK> Foulup--wnext is not at zero!\n"); // EMBEDDED
+    if (DfOff(wnext) != 0) {
+        sprintf(buffer,"\nLINK> Foulup--wnext is not at zero!\n");
+#ifdef MBED
+        usbTxString(buffer);
+#endif
     }
     /*  Sl(1);
         S0 -= DfOff(wnext);  */	      /* Null operation.  Wnext is first */
@@ -5179,14 +5273,18 @@ prim P_walkback()		      /* Set or clear error walkback */
 
 #ifdef WORDSUSED
 
-prim P_wordsused()		      /* List words used by program */
-{
+    /* List words used by program */
+prim P_wordsused() {
     dictword *dw = dict;
+
+    char buffer[80];
 
     while (dw != NULL) {
         if (*(dw->wname) & WORDUSED) {
-
-            printf("\r\n%s", dw->wname + 1); // EMBEDDED
+            sprintf("\r\n%s", dw->wname + 1); // EMBEDDED
+#ifdef MBED
+            usbTxString(buffer);
+#endif
         }
 #ifdef Keyhit
         if (kbquit()) {
@@ -5196,7 +5294,9 @@ prim P_wordsused()		      /* List words used by program */
         dw = dw->wnext;
     }
 
-    printf("\n"); // EMBEDDED
+#ifdef MBED
+        usbTxByte('\n');
+#endif
 
 }
 
@@ -5204,9 +5304,14 @@ prim P_wordsunused()		      /* List words not used by program */
 {
     dictword *dw = dict;
 
+    char buffer[80];
+
     while (dw != NULL) {
         if (!(*(dw->wname) & WORDUSED)) {
-            printf("\r\n%s", dw->wname + 1); // EMBEDDED
+            sprintf(buffer,"\r\n%s", dw->wname + 1);
+#ifdef MBED
+            usbTxString(buffer);
+#endif
         }
 #ifdef Keyhit
         if (kbquit()) {
@@ -5216,7 +5321,9 @@ prim P_wordsunused()		      /* List words not used by program */
         dw = dw->wnext;
     }
 
-    printf("\n");  // EMBEDDED
+#ifdef MBED
+        usbTxByte('\n');
+#endif
 
 }
 #endif /* WORDSUSED */
@@ -5812,17 +5919,26 @@ void atl_primdef( struct primfcn *pt) {
 /*  PWALKBACK  --  Print walkback trace.  */
 
 static void pwalkback() {
+    char buffer[80];
+
 	if (atl_walkback && ((curword != NULL) || (wbptr > wback))) {
 
-		printf("Walkback:\r\n"); // EMBEDDED
-
+		sprintf(buffer,"Walkback:\r\n"); // EMBEDDED
+#ifdef MBED
+        usbTxString(buffer);
+#endif
 		if (curword != NULL) {
-			printf("   %s\r\n", curword->wname + 1); // EMBEDDED
+			sprintf(buffer,"   %s\r\n", curword->wname + 1); // EMBEDDED
+#ifdef MBED
+        usbTxString(buffer);
+#endif
 		}
 		while (wbptr > wback) {
 			dictword *wb = *(--wbptr);
-#ifdef EMBEDDED
-			printf("   %s\r\n", wb->wname + 1); // EMBEDDED
+
+			sprintf(buffer,"   %s\r\n", wb->wname + 1); // EMBEDDED
+#ifdef MBED
+        usbTxString(buffer);
 #endif
 		}
 	}
@@ -5834,7 +5950,11 @@ static void pwalkback() {
 // static void trouble(char *kind) {
 void trouble(char *kind) {
 #ifdef MEMMESSAGE
-    printf("\n%s.\r\n", kind); // EMBEDDED
+    char buffer[80];
+    sprintf(buffer,"\n%s.\r\n", kind); // EMBEDDED
+#ifdef MBED
+    usbTxString(buffer);
+#endif
 #endif
 #ifdef WALKBACK
     pwalkback();
@@ -5926,6 +6046,7 @@ static void divzero()
 
 // static void exword( dictword *wp) {
 void exword( dictword *wp) {
+    char buffer[80];
     curword = wp;
 #ifdef TRACE
     if (atl_trace) {
@@ -5933,11 +6054,16 @@ void exword( dictword *wp) {
 	 P_dots();
 #ifdef FREERTOS
 	 atlastTxBuffer(console, (uint8_t *)"\t\t") ;
-#else
-     printf("\t\t");
+#endif
+#ifdef MBED
+     usbTxByte( '\t' );
+     usbTxByte( '\t' );
 #endif
 
-        printf("\nTrace: %s \r\n", curword->wname + 1); //  EMBEDDED
+        sprintf(buffer,"\nTrace: %s \r\n", curword->wname + 1); //  EMBEDDED
+#ifdef MBED
+     usbTxString( buffer );
+#endif
     }
 #endif /* TRACE */
     (*curword->wcode)();	      /* Execute the first word */
@@ -5955,9 +6081,12 @@ void exword( dictword *wp) {
         curword = *ip++;
 #ifdef TRACE
         if (atl_trace) {
-	 P_dots();
-     printf("\t\t");
-            printf("\nTrace: %s ", curword->wname + 1); // EMBEDDED
+            char buffer[80];
+    	    P_dots();
+            sprintf(buffer,"\t\t\nTrace: %s ", curword->wname + 1); // EMBEDDED
+#ifdef MBED
+             usbTxString( buffer );
+#endif
         }
 #endif /* TRACE */
         (*curword->wcode)();	      /* Execute the next word */
@@ -6275,7 +6404,11 @@ int atl_load(FILE *fp) {
     if ((es == ATL_SNORM) && (atl_comment == Truth)) {
 #ifdef MEMMESSAGE
 
-        printf("\nRunaway `(' comment.\n"); // EMBEDDED
+        char buffer[80];
+        sprintf("\nRunaway `(' comment.\n");
+#ifdef MBED
+        usbTxString( buffer );
+#endif
 #endif
         es = ATL_RUNCOMM;
         atl_unwind(&mk);
@@ -6313,7 +6446,11 @@ int atl_prologue( char *sp) {
                 if ((ap = strchr(sp + 3, ' ')) != NULL) {
                     V sscanf(ap + 1, "%li", proname[i].pparam);
 #ifdef PROLOGUEDEBUG
-                    printf("Prologue set %sto %ld\n", proname[i].pname, *proname[i].pparam); // EMBEDDED
+                    char buffer[80];
+                    sprintf(buffer,"Prologue set %sto %ld\n", proname[i].pname, *proname[i].pparam);
+#ifdef MBED
+                    usbTxString(buffer);
+#endif
 #endif
                     return 1;
                 }
@@ -6367,7 +6504,8 @@ int atl_eval(char *sp) {
                         while (dw != NULL) {
                             if (dw == dictprot) {
 #ifdef MEMMESSAGE
-                                printf("\nForget protected.\n"); //  EMBEDDED
+                                char buffer[40];
+                                sprintf(buffer,"\nForget protected.\n");
 #endif
                                 evalstat = ATL_FORGETPROT;
                                 di = NULL;
@@ -6401,7 +6539,11 @@ int atl_eval(char *sp) {
                                back up the heap one more item. */
                             if (di->wcode == (codeptr) P_dodoes) {
 #ifdef FORGETDEBUG
-                                printf(" Forgetting DOES> word. "); //  EMBEDDED
+                                char buffer[40];
+                                sprintf(buffer," Forgetting DOES> word. "); 
+#ifdef MBED
+                                usbTxString( buffer );
+#endif
 #endif
                                 hptr--;
                             }
@@ -6409,7 +6551,11 @@ int atl_eval(char *sp) {
                     } else {
 #ifdef MEMMESSAGE
 #ifdef EMBEDDED
-                        printf(" '%s' undefined ", tokbuf); // EMBEDDED
+                        char buffer[40];
+                        sprintf(buffer," '%s' undefined ", tokbuf);
+#ifdef MBED
+                        usbTxString( buffer );
+#endif
 #endif
 #endif
                         // evalstat = ATL_UNDEFINED;
@@ -6422,7 +6568,11 @@ int atl_eval(char *sp) {
                         Push = (stackitem) di; /* Push word compile address */
                     } else {
 #ifdef MEMMESSAGE
-                        printf(" '%s' undefined ", tokbuf); // EMBEDDED
+                        char buffer[40];
+                        sprintf(buffer," '%s' undefined ", tokbuf); // EMBEDDED
+#ifdef MBED
+                        usbTxString( buffer );
+#endif
 #endif
                         evalstat = ATL_UNDEFINED;
                     }
@@ -6433,7 +6583,11 @@ int atl_eval(char *sp) {
                     defpend = False;
                     ucase(tokbuf);
                     if (atl_redef && (lookup(tokbuf) != NULL)) {
-                        printf("\n%s isn't unique.", tokbuf); // NOT EMBEDDED
+                        char buffer[40];
+                        sprintf(buffer,"\n%s isn't unique.", tokbuf);
+#ifdef MBED
+                        usbTxString( buffer );
+#endif
                     }
 
                     enter(tokbuf);
@@ -6465,7 +6619,11 @@ int atl_eval(char *sp) {
                         }
                     } else {
 #ifdef MEMMESSAGE
-                        printf(" '%s' undefined\r\n", tokbuf); // EMBEDDED
+                        char buffer[40];
+                        sprintf(buffer," '%s' undefined\r\n", tokbuf);
+#ifdef MBED
+                        usbTxString( buffer );
+#endif
 #endif
                         evalstat = ATL_UNDEFINED;
                         state = Falsity;
@@ -6527,7 +6685,11 @@ int atl_eval(char *sp) {
                         V strcpy(((char *) hptr) + 1, tokbuf);
                         hptr += l;
                     } else {
-                        printf("%s", tokbuf); // EMBEDDED
+                        char buffer[80];
+                        sprintf(buffer,"%s", tokbuf); 
+#ifdef MBED
+                        usbTxString( buffer );
+#endif
                     }
                 } else {
                     if (state) {
@@ -6550,7 +6712,13 @@ int atl_eval(char *sp) {
                 break;
 #endif /* STRING */
             default:
-                printf("\nUnknown token type %d\n", i); // EMBEDDED
+                {
+                    char buffer[80];
+                    sprintf(buffer,"\nUnknown token type %d\n", i);
+#ifdef MBED
+                    usbTxString( buffer );
+#endif
+                }
                 break;
         }
     }

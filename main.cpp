@@ -13,7 +13,8 @@ extern "C" {
 #include "atldef.h"
 
 #include "extraFunc.h"
-
+#include "io.h"
+    
 #ifdef NVRAMRC
 #include "nvramrc.h"
 #else
@@ -129,12 +130,19 @@ int main() {
 
     cpp_extrasLoad();
 
+    ATH_banner();
+
     ledThread.start(ledControlTask);
 
     while(runFlag) {
         (void)memset(outBuffer,0,sizeof(outBuffer));
         (void)memset((char *)lineBuffer,0,sizeof(lineBuffer));
-        pc->printf("\n\r-> ");
+
+        sprintf(outBuffer, "\n\r-> ");
+#ifdef MBED
+        usbTxString(outBuffer);
+#endif
+//        pc->printf("\n\r-> ");
 
         len = getline(pc, lineBuffer, MAX_LINE) ;
         atl_eval((char *)lineBuffer);
