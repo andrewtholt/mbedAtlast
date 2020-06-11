@@ -71,6 +71,7 @@ extern void atl_break();
 extern int atl_eval(char *);
 // extern int atl_load();
 extern void atl_memstat();
+extern void ATH_banner();
 
 #ifdef EMBEDDED
 #define OUTBUFF_SIZE 255

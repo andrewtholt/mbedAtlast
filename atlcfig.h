@@ -10,6 +10,7 @@
                             //
 // Define OS platform here
 // #define FREERTOS
+#define MBED
 //
 // LINUX should apply to any UNIX like system, such as
 // MacOS X, Solaris, QNX, Cygwin ....

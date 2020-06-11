@@ -5,6 +5,7 @@
 
 extern Queue<message_t, 8> tasks[];
 extern MemoryPool<message_t, 8> mpool; 
+extern Serial *pc;
 
 using namespace std;
 

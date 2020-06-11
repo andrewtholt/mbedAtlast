@@ -909,6 +909,7 @@ prim athAddEOL() {
     char *ptr = S0;
     strcat(ptr,"\n");
 }
+/*
 // 
 // name sock -- str:value
 //
@@ -962,7 +963,7 @@ prim athCmdSet() {
 
     Push = status;
 }
-
+*/
 prim ATH_dump() {
     Sl(2); // address len
 
@@ -2223,7 +2224,7 @@ static int token( char **cp) {
 
     while (True) {
         char *tp = tokbuf;
-        int tl = 0;
+        unsigned int tl = 0;
         Boolean istring = False, rstring = False;
 
         if (atl_comment) {
@@ -2353,7 +2354,7 @@ static int token( char **cp) {
         /* See if the token is a number. */
 
         if (isdigit(tokbuf[0]) || tokbuf[0] == '-') {
-            char tc;
+//            char tc;
             char *tcp;
 
 #ifdef USE_SSCANF
@@ -2508,7 +2509,7 @@ prim ATH_flushSerialPort() {
 #endif
 
 #ifdef FgetspNeeded
-
+#ifdef FILEIO
 /*  ATL_FGETSP	--  Portable database version of FGETS.  This reads the
     next line into a buffer a la fgets().  A line is
     delimited by either a carriage return or a line
@@ -2551,7 +2552,7 @@ Exported char *atl_fgetsp(char *s, int n, int stream) {
 	s[idx]='\0';
 	return s;
 }
-
+#endif
 #ifdef LINUX
 Exported char *atl_fgetsp(char *s, int n, FILE *stream) {
     int i = 0, ch;
@@ -2862,7 +2863,7 @@ prim P_lstrip() {
         }
     }
 
-    S0=ptr;
+    S0=(stackitem)ptr;
 }
 
 
@@ -3331,7 +3332,7 @@ prim P_strsep() {
     delim=(uint8_t) S0;
     buffer=(uint8_t *)S1;
 
-    res=strsep(&buffer, &delim);
+    res=strsep((char **)&buffer, (char *)&delim);
     Pop2;
     Push=(stackitem)res;
 }
@@ -6244,6 +6245,7 @@ void atl_break()
 }
 #endif /* BREAK */
 
+#ifdef FILEIO
 /*  ATL_LOAD  --  Load a file into the system.	*/
 int atl_load(FILE *fp) {
     int es = ATL_SNORM;
@@ -6283,6 +6285,7 @@ int atl_load(FILE *fp) {
     instream = sinstr;		      /* Unstack input stream */
     return es;
 }
+#endif
 /*  ATL_PROLOGUE  --  Recognise and process prologue statement.
     Returns 1 if the statement was part of the
     prologue and 0 otherwise. */
@@ -6304,7 +6307,7 @@ int atl_prologue( char *sp) {
         char *vp = sp + 3, *ap;
 
         ucase(vp);
-        for (i = 0; i < ELEMENTS(proname); i++) {
+        for (i = 0; i < (int)ELEMENTS(proname); i++) {
             if (strncmp(sp + 3, proname[i].pname,
                         strlen(proname[i].pname)) == 0) {
                 if ((ap = strchr(sp + 3, ' ')) != NULL) {
