@@ -338,7 +338,7 @@ prim ATH_Token() {
 void ATH_Features() {
 
 #ifdef ARRAY
-    printf("\n    ARRAY\r\n");
+    usbTxString((char *)"\n    ARRAY\r\n");
 #else
     printf("\nNOT ARRAY\r\n");
 #endif

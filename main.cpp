@@ -26,6 +26,7 @@ extern "C" {
 
 Queue<message_t, 8> tasks[(int)taskId::LAST];    
 MemoryPool<message_t, 8> mpool;    
+Serial *pc ;
 
 Thread ledThread;
 
@@ -98,7 +99,7 @@ int main() {
     int8_t len;
     //    Serial pc(USBTX, USBRX);
 
-    Serial *pc = new Serial(USBTX, USBRX);
+    pc = new Serial(USBTX, USBRX);
 
     bool runFlag=true;
 
