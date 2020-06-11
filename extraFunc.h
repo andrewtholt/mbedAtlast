@@ -1,4 +1,6 @@
-
+extern "C" {
+#include "atldef.h"
+}
 void crap();
 void cpp_extrasLoad();
 

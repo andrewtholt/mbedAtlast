@@ -48,14 +48,7 @@
 // 
 // Stuff added by me
 // 
+#define EXPORT
 
-
-#ifdef PUBSUB
-#ifdef PTHREAD
-#include <pthread.h>
-extern pthread_mutex_t lock;
-
-#endif
-#endif
 
 #endif

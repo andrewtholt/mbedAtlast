@@ -74,7 +74,7 @@ typedef struct {
     dictword *mdict;		      /* Dictionary marker */
 } atl_statemark;
 
-#ifdef EXPORT
+// #ifdef EXPORT
 #define Exported
 #ifndef NOMANGLE
 #define stk	    atl__sp
@@ -96,7 +96,7 @@ typedef struct {
 #define ip	    atl__ip
 #define curword     atl__cw
 #define createword  atl__wd
-#endif /* NOMANGLE */
+// #endif /* NOMANGLE */
 
 #ifdef MEMSTAT
 #ifndef NOMANGLE
