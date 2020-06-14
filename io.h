@@ -2,8 +2,8 @@
 #ifdef __cplusplus
 extern"C" {
 #endif
-void usbTxByte(char c);
-void usbTxString(char *ptr);
+void atlastTxByte(char c);
+void atlastTxString(char *ptr);
 
 #ifdef __cplusplus
 }

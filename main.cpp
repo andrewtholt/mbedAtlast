@@ -158,7 +158,7 @@ int main() {
 
         sprintf(outBuffer, "\n\r-> ");
 #ifdef MBED
-        usbTxString(outBuffer);
+        atlastTxString(outBuffer);
 #endif
 //        pc->printf("\n\r-> ");
 
