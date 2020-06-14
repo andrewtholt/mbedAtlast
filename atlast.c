@@ -32,14 +32,6 @@
 
 // #include "atldef.h"
 
-#if defined(LINUX)
-#include <mqueue.h>
-#include <libser.h>
-#endif
-
-#if defined(LINUX) || defined(DARWIN)
-#include <unistd.h>
-#include <poll.h>
 #ifdef ATH
 // 
 // Socket includes
@@ -49,20 +41,8 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif
 
 #endif
-#ifdef PTHREAD
-#include <pthread.h>
-#endif
-#endif
-
-#ifdef FILEIO
-    #ifdef FREERTOS
-        #ifdef YAFFS
-            #include "yportenv.h"
-        #endif
-    #endif
 #endif
 
 // #define MEMSTAT
@@ -710,7 +690,8 @@ prim ATH_ms() {
 
 #ifdef FREERTOS
     vTaskDelay(pdMS_TO_TICKS((uint32_t)S0));
-
+#endif
+#ifdef MBED
 #endif
     Pop;
 }
@@ -2030,18 +2011,6 @@ prim FR_putMessage() {
 #endif
 	Push=rc;
 }
-
-#ifdef LINUX
-#ifdef PTHREAD
-extern pthread_mutex_t lock;
-prim PS_comms() {
-
-	pthread_mutex_unlock(&lock);
-    pthread_yield();
-    sleep(1);
-}
-#endif
-#endif
 
 prim FR_mkdb() {
 	So(1);

@@ -37,10 +37,14 @@ void ledControlTask(void) {
 //    Queue<message_t, 8> myQueue = tasks[iam];    
     
     bool runFlag = true;    
+    bool blink = true;
     DigitalOut myLed(LED1);    
+
+    uint32_t dly = 250;
+//    uint32_t dly = osWaitForever;
     
     while(runFlag) {    
-        osEvent evt = tasks[iam].get(osWaitForever);    
+        osEvent evt = tasks[iam].get( dly );    
     
         if (evt.status == osEventMessage ) {    
             message_t *message = (message_t*)evt.value.p;    
@@ -50,14 +54,28 @@ void ledControlTask(void) {
             if(!strcmp(topic,"LED1")) {    
                 char *msg = message->body.hl_body.msg;    
                 if(!strcmp(msg,"ON")) {    
-                    myLed=1;    
+                    blink = true;
+//                    myLed=1;    
                 } else if(!strcmp(msg,"OFF")) {    
-                    myLed=0;    
+                    blink = false;
+//                    myLed=0;    
                 }    
             }    
     
             mpool.free(message);    
-        }    
+        } else {
+            if (blink) {
+                dly = 250;
+                if(myLed == 1) {
+                    myLed = 0;
+                } else {
+                    myLed = 1;
+                }
+            } else {
+                myLed = 0;
+                dly = osWaitForever;
+            }
+        }
     }    
 }
 
