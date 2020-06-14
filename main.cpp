@@ -55,9 +55,11 @@ void ledControlTask(void) {
                 char *msg = message->body.hl_body.msg;    
                 if(!strcmp(msg,"ON")) {    
                     blink = true;
+                    dly = 250;
 //                    myLed=1;    
                 } else if(!strcmp(msg,"OFF")) {    
                     blink = false;
+                    dly = osWaitForever;
 //                    myLed=0;    
                 }    
             }    
@@ -65,7 +67,6 @@ void ledControlTask(void) {
             mpool.free(message);    
         } else {
             if (blink) {
-                dly = 250;
                 if(myLed == 1) {
                     myLed = 0;
                 } else {
@@ -73,7 +74,6 @@ void ledControlTask(void) {
                 }
             } else {
                 myLed = 0;
-                dly = osWaitForever;
             }
         }
     }    
