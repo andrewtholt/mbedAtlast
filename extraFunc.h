@@ -15,6 +15,9 @@ void getLEDId();
 void getLowLevelType();
 void getHighLevelType();
 
+void MBED_addRecord();
+void MBED_lookup();
+
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
 
@@ -27,6 +30,9 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0SEND-MSG", sendMsg},
     {(char *)"0MAIN@", getMainId},
     {(char *)"0LED@", getLEDId},
+
+    {(char *)"0ADD-RECORD",  MBED_addRecord},
+    {(char *)"0LOOKUP",  MBED_lookup},
 //    {NULL, (codeptr) 0}
     {nullptr, (codeptr) 0}
 };

@@ -2,10 +2,13 @@
 #include "mbed.h"
 #include "msg.h"
 #include "tasks.h"
+#include "Small.h"
 
 extern Queue<message_t, 8> tasks[];
 extern MemoryPool<message_t, 8> mpool; 
 extern Serial *pc;
+
+char dataBuffer[255];  //Somewhat to put data.
 
 using namespace std;
 
@@ -37,7 +40,7 @@ prim getHighLevelType() {
 }
 
 prim getMainId() {
-    Push = (int) taskId::MAIN;
+    Push = (int) taskId::ATLAST;
 }
 
 prim getLEDId() {
@@ -59,7 +62,6 @@ prim setSender() {
 
 prim setTopic() {
     message_t *msg = (message_t *)S0;
-
     char *topic = (char *)S1;
 
     strcpy(msg->body.hl_body.topic,topic);
@@ -77,6 +79,31 @@ prim setMsg() {
     Pop2;
 }
 
+// 
+// Stack: db key value --
+//
+prim MBED_addRecord() {
+//    Sl(3);
+    char *value =(char *)S0;
+    char *key = (char *)S1;
+    Small *db = (Small *)S2;
+ 
+    db->Set(key, value);
+    Pop2;
+    Pop;
+//    So(0);
+}
+// 
+// Stack: db key -- 
+prim MBED_lookup() {
+    char *key = (char *)S0;
+    Small *db = (Small *)S1;
+    
+    string tmp = db->Get(key);
+    strcpy(dataBuffer, tmp.c_str());
+    Pop;
+    S0=(stackitem)dataBuffer;
+}
 
 void cpp_extrasLoad() {
     atl_primdef( cpp_extras );

@@ -5263,13 +5263,13 @@ static struct primfcn primt[] = {
 
 #endif
 #ifdef PUBSUB
-	{(char *)"0MKDB",     FR_mkdb},
-	{(char *)"0ADD-RECORD",  FR_addRecord},
-	{(char *)"0LOOKUP",  FR_lookup},
-	{(char *)"0LOOKUP-REC",  FR_lookupRecord},
-	{(char *)"0PUBLISH",  FR_publish},
-	{(char *)"0GET-SUBCOUNT",  FR_subCount},
-	{(char *)"0.RECORD",  FR_displayRecord},
+//    {(char *)"0MKDB",     FR_mkdb},
+    {(char *)"0ADD-RECORD",  FR_addRecord},
+    {(char *)"0LOOKUP",  FR_lookup},
+    {(char *)"0LOOKUP-REC",  FR_lookupRecord},
+    {(char *)"0PUBLISH",  FR_publish},
+    {(char *)"0GET-SUBCOUNT",  FR_subCount},
+    {(char *)"0.RECORD",  FR_displayRecord},
     {(char *)"0MESSAGE@", FR_getMessage},
     {(char *)"0MESSAGE!", FR_putMessage},
 #ifdef FREERTOS

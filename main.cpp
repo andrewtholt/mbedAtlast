@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "msg.h"
 #include "tasks.h"
+#include "Small.h"
 #define ECHO
 extern "C" {
 #include <stdio.h>
@@ -14,7 +15,6 @@ extern "C" {
 
 #include "extraFunc.h"
 #include "io.h"
-    
 #ifdef NVRAMRC
 #include "nvramrc.h"
 #else
@@ -112,7 +112,7 @@ int getline(Serial *port, uint8_t *b, const uint8_t len) {
     return(count);
 }
 
-void  atlast() {
+void  atlast(Small *db) {
     char t[132];
     int8_t len;
     //    Serial pc(USBTX, USBRX);
@@ -135,17 +135,16 @@ void  atlast() {
         atl_eval((char *)lineBuffer);
     } while(len >= 0);
 
-    var = atl_vardef((char *)"FOUR",4);
-
-    /*
-       if(var == NULL) {
-       fprintf(stderr,"Vardef failed\n");
-       } else {
-     *((int *)atl_body(var))=42;
-     }
-     */
-
     cpp_extrasLoad();
+
+    var = atl_vardef((char *)"DBASE",sizeof(Small *));
+
+    if(var == NULL) {
+        fprintf(stderr,"Vardef failed\n");
+    } else {
+//        *((int *)atl_body(var))=42;
+        *((stackitem *)atl_body(var))=(stackitem)db;
+    }
 
     ATH_banner();
 
@@ -165,16 +164,40 @@ void  atlast() {
 //    return 0;
 }
 
-int main() {
-    Thread ledThread;
-    Thread atlastThread;
+void atlastRx(Small *db) {
+    int iam = (int) taskId::ATLAST;
 
+    while(true) {
+        osEvent evt = tasks[iam].get(  );
+
+        if (evt.status == osEventMessage ) {
+            message_t *message = (message_t*)evt.value.p;
+    
+            taskId From = message->Sender;
+            msgType type = message->type;
+            char *topic = message->body.hl_body.topic;
+            char *msg = message->body.hl_body.msg;
+        }
+
+        ThisThread::sleep_for(0);
+    }
+}
+
+int main() {
+    Small *atlastDb = new Small();
+
+    Thread ledThread;
     ledThread.start(ledControlTask);
 
-    atlastThread.start(atlast);
+    Thread atlastRxThread;
+    atlastRxThread.start(atlastRx,atlastDb);
+
+    Thread atlastThread;
+    atlastThread.start(atlast,atlastDb);
+
+    atlastThread.join();
 
     ledThread.join();
-    atlastThread.join();
 }
 
 
