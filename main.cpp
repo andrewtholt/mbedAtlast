@@ -29,7 +29,6 @@ Queue<message_t, 8> tasks[(int)taskId::LAST];
 MemoryPool<message_t, 8> mpool;    
 Serial *pc ;
 
-Thread ledThread;
 
 void ledControlTask(void) {    
     
@@ -113,7 +112,7 @@ int getline(Serial *port, uint8_t *b, const uint8_t len) {
     return(count);
 }
 
-int main() {
+void  atlast() {
     char t[132];
     int8_t len;
     //    Serial pc(USBTX, USBRX);
@@ -150,8 +149,6 @@ int main() {
 
     ATH_banner();
 
-    ledThread.start(ledControlTask);
-
     while(runFlag) {
         (void)memset(outBuffer,0,sizeof(outBuffer));
         (void)memset((char *)lineBuffer,0,sizeof(lineBuffer));
@@ -165,8 +162,19 @@ int main() {
         len = getline(pc, lineBuffer, MAX_LINE) ;
         atl_eval((char *)lineBuffer);
     }
-    return 0;
+//    return 0;
 }
 
+int main() {
+    Thread ledThread;
+    Thread atlastThread;
+
+    ledThread.start(ledControlTask);
+
+    atlastThread.start(atlast);
+
+    ledThread.join();
+    atlastThread.join();
+}
 
 
