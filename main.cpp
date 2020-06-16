@@ -173,6 +173,7 @@ void  atlast(Small *db) {
 
 void atlastRx(Small *db) {
     int iam = (int) taskId::ATLAST;
+    parseMsg *p = new parseMsg( db );
     
     while(true) {
         osEvent evt = tasks[iam].get(  );
@@ -180,13 +181,19 @@ void atlastRx(Small *db) {
         if (evt.status == osEventMessage ) {
             message_t *message = (message_t*)evt.value.p;
             
+            bool fail = p->fromMsgToDb(message);
+            
+            /*
             taskId From = message->Sender;
             msgType type = message->type;
             char *topic = message->body.hl_body.topic;
             char *msg = message->body.hl_body.msg;
+            */
+            
+            mpool.free(message);
         }
         
-        ThisThread::sleep_for(0);
+//        ThisThread::yield();
     }
 }
 

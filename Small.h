@@ -15,6 +15,7 @@ class datum {
 } ;
 
 class Small {
+    friend class mbedSmall;
     public:
         Small();
         ~Small();
