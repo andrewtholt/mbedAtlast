@@ -2,7 +2,8 @@
 #include "mbed.h"
 #include "msg.h"
 #include "tasks.h"
-#include "Small.h"
+// #include "Small.h"
+#include "mbedSmall.h"
 #include "parseMsg.h"
 
 extern Queue<message_t, 8> tasks[];
@@ -115,6 +116,23 @@ prim MBED_dbToMsg() {
     memset(msg,0,sizeof(message_t));
     
     bool fail = parse->fromDbToMsg( msg, sender, key);
+    if(fail) {
+        mpool.free(msg);    
+    }
+    
+    Npop(3);
+    S0 = (stackitem)fail;
+}
+
+prim MBED_subscribe() {
+    parseMsg *parse = (parseMsg *)S3;
+    message_t *msg = (message_t *)S2;
+    taskId sender = (taskId)S1;
+    char *key = (char *)S0;
+    
+    memset(msg,0,sizeof(message_t));
+    
+    bool fail = parse->subscribe( msg, sender, key);
     if(fail) {
         mpool.free(msg);    
     }

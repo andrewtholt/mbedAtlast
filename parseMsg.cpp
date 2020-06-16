@@ -79,4 +79,28 @@ bool parseMsg::fromDbToMsg(message_t *msg,taskId sender, char *key) {
     return fail;
 }
 
+bool parseMsg::subscribe(message_t *msg, taskId sender, char *key) {
+    bool fail=true;
+    
+    std::string v = data->Get( key );
 
+    if( v != "<NON>" ) {
+        msg->Sender = sender;
+        msg->type = msgType::HI_LEVEL;
+        msg->op.hl_op = highLevelOperation::SUB;
+        strncpy(msg->body.hl_body.topic, key, MAX_TOPIC);
+//        strncpy(msg->body.hl_body.msg, v.c_str(), MAX_MSG);
+
+        fail=false;
+    }
+    
+    return fail;
+}
+
+taskId parseMsg::getSender(message_t *msg) {
+    return msg->Sender;
+}
+
+char *parseMsg::getKey(message_t *msg) {
+    return (char *)msg->body.hl_body.topic;
+}

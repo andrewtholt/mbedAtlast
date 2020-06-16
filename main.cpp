@@ -1,7 +1,9 @@
 #include "mbed.h"
 #include "msg.h"
 #include "tasks.h"
-#include "Small.h"
+// #include "Small.h"
+#include "mbedSmall.h"
+
 #define ECHO
 extern "C" {
     #include <stdio.h>
@@ -40,21 +42,42 @@ void ledControlTask(void) {
  
     DigitalOut myLed(LED1);    
     
-    Small *db = new Small();
+    Small *db = new mbedSmall();
     parseMsg *p = new parseMsg( db );
     
     db->Set("LED1","ON");
     
     uint32_t dly = 250;
-    
+   
+    bool fail=true;
     
     while(runFlag) {    
         osEvent evt = tasks[iam].get( dly );    
         
         if (evt.status == osEventMessage ) {    
             message_t *message = (message_t*)evt.value.p;
+            char *k;
+            taskId id;
             
-            bool fail = p->fromMsgToDb(message);
+            switch(message->op.hl_op) {
+                case highLevelOperation::NOP :
+                    break;
+                case highLevelOperation::GET :
+                    break;
+                case highLevelOperation::SET :
+                    fail = p->fromMsgToDb(message);
+                    break;
+                case highLevelOperation::SUB :
+                    id = p->getSender(message);
+                    k = p->getKey(message);
+                    
+                    db->Sub(k,(uint8_t)id);
+                    break;
+            }
+            /*
+            if (message->op.hl_op == highLevelOperation::SET) {
+            }
+            */
             
             mpool.free(message);    
         } 

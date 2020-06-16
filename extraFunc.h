@@ -17,6 +17,7 @@ void getHighLevelType();
 
 void MBED_addRecord();
 void MBED_lookup();
+void MBED_subscribe();
 void MBED_dbToMsg();
 
 static struct primfcn cpp_extras[] = {
@@ -34,6 +35,7 @@ static struct primfcn cpp_extras[] = {
 
     {(char *)"0ADD-RECORD",  MBED_addRecord},
     {(char *)"0LOOKUP",  MBED_lookup},
+    {(char *)"0SUBSCRIBE", MBED_subscribe},
     {(char *)"0DB-TO-MSG",  MBED_dbToMsg},
     
 //    {NULL, (codeptr) 0}

@@ -4,7 +4,8 @@
  *   DATE: Sat Jun 13 13:36:06 2020
  *  DESCR: 
  ***********************************************************************/
-#include "Small.h"
+// #include "Small.h"
+#include "mbedSmall.h"
 #include <iostream>
 
 /***********************************************************************
@@ -89,7 +90,7 @@ void Small::Sub(std::string key, uint8_t id) {
     int cnt = db.count(key);
     if (cnt > 0) {
         (db[key]->subscriber).insert(id);
-
+        
         sendSet(id, key, db[key]->value);
     } 
 
