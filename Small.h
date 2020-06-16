@@ -20,6 +20,8 @@ class Small {
         ~Small();
 
         std::string Get(std::string key);
+        bool GetBool(std::string key);
+        
         void Set(std::string key, std::string value);
         void Sub(std::string key, uint8_t id);
         void dump();
@@ -27,5 +29,8 @@ class Small {
         virtual void sendSet(uint8_t id,std::string key, std::string value);
     private:
         std::map<std::string, datum *> db;
+        
+        std::set<std::string>True  = {"TRUE","ON","YES"};
+        std::set<std::string>False = {"FALSE","OFF","NO"};
 };
 

@@ -45,6 +45,12 @@ std::string Small::Get(std::string key) {
     return res;
 }
 
+bool Small::GetBool(std::string key) {
+    bool state = false;
+    
+    return state;
+}
+
 /***********************************************************************
  *  Method: Small::Set
  *  Params: std::string key, std::string value

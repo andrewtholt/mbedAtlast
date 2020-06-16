@@ -37,39 +37,30 @@ void ledControlTask(void) {
     //    Queue<message_t, 8> myQueue = tasks[iam];    
     
     bool runFlag = true;    
-    bool blink = true;
+ 
     DigitalOut myLed(LED1);    
     
+    Small *db = new Small();
+    parseMsg *p = new parseMsg( db );
+    
+    db->Set("LED1","ON");
+    
     uint32_t dly = 250;
-    //    uint32_t dly = osWaitForever;
+    
     
     while(runFlag) {    
         osEvent evt = tasks[iam].get( dly );    
         
         if (evt.status == osEventMessage ) {    
-            message_t *message = (message_t*)evt.value.p;    
+            message_t *message = (message_t*)evt.value.p;
             
-            char *topic = message->body.hl_body.topic;    
+            bool fail = p->fromMsgToDb(message);
             
-            if( message->op.hl_op == highLevelOperation::SET) {
-                
-                if(!strcmp(topic,"LED1")) {    
-                    char *msg = message->body.hl_body.msg;    
-                    if(!strcmp(msg,"ON")) {    
-                        blink = true;
-                        dly = 250;
-                        //                    myLed=1;    
-                    } else if(!strcmp(msg,"OFF")) {    
-                        blink = false;
-                        dly = osWaitForever;
-                        //                    myLed=0;    
-                    }    
-                }
-            }
             mpool.free(message);    
         } 
         
-        if (blink) {
+        string ledState = db->Get("LED1");
+        if (ledState == "ON") {
             if(myLed == 1) {
                 myLed = 0;
             } else {
@@ -116,7 +107,7 @@ int getline(Serial *port, uint8_t *b, const uint8_t len) {
 }
 
 void  atlast(Small *db) {
-    char t[132];
+    // char t[132];
     int8_t len;
     //    Serial pc(USBTX, USBRX);
     
@@ -125,7 +116,7 @@ void  atlast(Small *db) {
     bool runFlag=true;
     
     uint8_t lineBuffer[MAX_LINE];
-    dictword *var;
+    // dictword *var;
     //    int *tst;
     
     pc->baud(115200);
@@ -206,10 +197,10 @@ int main() {
     ledThread.start(ledControlTask);
     
     Thread atlastRxThread;
-    atlastRxThread.start(atlastRx,atlastDb);
+    atlastRxThread.start(callback(atlastRx,atlastDb));
     
     Thread atlastThread;
-    atlastThread.start(atlast,atlastDb);
+    atlastThread.start(callback(atlast,atlastDb));
     
     atlastThread.join();
     

@@ -40,11 +40,13 @@ bool parseMsg::fromMsgToDb(message_t *msg) {
     msgType t = msg->type;
 
     if( t == msgType::HI_LEVEL) {
-        char *key = msg->body.hl_body.topic;
-        char *value = msg->body.hl_body.msg;
+        if( msg->op.hl_op == highLevelOperation::SET) {
+            char *key = msg->body.hl_body.topic;
+            char *value = msg->body.hl_body.msg;
 
-        data->Set(key,value);
-        fail = false;
+            data->Set(key,value);
+            fail = false;
+        }
     }
 
     return fail;

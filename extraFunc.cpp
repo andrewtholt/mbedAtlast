@@ -115,7 +115,7 @@ prim MBED_dbToMsg() {
     memset(msg,0,sizeof(message_t));
     
     bool fail = parse->fromDbToMsg( msg, sender, key);
-    if(fail( {
+    if(fail) {
         mpool.free(msg);    
     }
     
