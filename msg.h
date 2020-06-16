@@ -1,7 +1,9 @@
+#pragma once
 
 #define MAX_TOPIC 32
 #define MAX_MSG 32
 #include "tasks.h"
+#include <cstdint>
 
 enum class msgType {
     INVALID=0,
