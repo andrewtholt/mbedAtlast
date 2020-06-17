@@ -6,5 +6,5 @@
 
 class mbedSmall : public Small {
     public:
-        void sendSet(uint8_t id,std::string key, std::string value);
+        void sendSet(taskId source, taskId dest,std::string key, std::string value);
 };

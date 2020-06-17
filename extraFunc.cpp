@@ -6,9 +6,14 @@
 #include "mbedSmall.h"
 #include "parseMsg.h"
 
+#include "io.h"
+#include "tasks.h"
+#include "atlastUtils.h"
+
 extern Queue<message_t, 8> tasks[];
-extern MemoryPool<message_t, 8> mpool; 
+extern MemoryPool<message_t, 8> mpool;
 extern Serial *pc;
+extern Mutex stdio_mutex;
 
 char dataBuffer[255];  //Somewhat to put data.
 
@@ -21,7 +26,7 @@ extern "C" {
 
 prim crap() {
 }
-// 
+//
 // stack: <msg> <task id> --
 //
 prim sendMsg() {
@@ -81,7 +86,7 @@ prim setMsg() {
     Pop2;
 }
 
-// 
+//
 // Stack: db key value --
 //
 prim MBED_addRecord() {
@@ -89,18 +94,18 @@ prim MBED_addRecord() {
     char *value =(char *)S0;
     char *key = (char *)S1;
     Small *db = (Small *)S2;
- 
+
     db->Set(key, value);
     Pop2;
     Pop;
 //    So(0);
 }
-// 
-// Stack: db key -- 
+//
+// Stack: db key --
 prim MBED_lookup() {
     char *key = (char *)S0;
     Small *db = (Small *)S1;
-    
+
     string tmp = db->Get(key);
     strcpy(dataBuffer, tmp.c_str());
     Pop;
@@ -112,14 +117,14 @@ prim MBED_dbToMsg() {
     message_t *msg = (message_t *)S2;
     taskId sender = (taskId)S1;
     char *key = (char *)S0;
-    
+
     memset(msg,0,sizeof(message_t));
-    
+
     bool fail = parse->fromDbToMsg( msg, sender, key);
     if(fail) {
-        mpool.free(msg);    
+        mpool.free(msg);
     }
-    
+
     Npop(3);
     S0 = (stackitem)fail;
 }
@@ -129,16 +134,40 @@ prim MBED_subscribe() {
     message_t *msg = (message_t *)S2;
     taskId sender = (taskId)S1;
     char *key = (char *)S0;
-    
+
     memset(msg,0,sizeof(message_t));
-    
-    bool fail = parse->subscribe( msg, sender, key);
+
+    bool fail = parse->mkSubMsg( msg, sender, key);
     if(fail) {
-        mpool.free(msg);    
+        mpool.free(msg);
     }
-    
+
     Npop(3);
     S0 = (stackitem)fail;
+}
+
+prim MBED_get() {
+    parseMsg *parse = (parseMsg *)S3;
+    message_t *msg = (message_t *)S2;
+    taskId sender = (taskId)S1;
+    char *key = (char *)S0;
+
+    memset(msg,0,sizeof(message_t));
+
+    parse->mkGetMsg( msg, sender, key);
+    msg->op.hl_op = highLevelOperation::GET;
+
+    Npop(4);
+}
+
+prim MBED_msgDump() {
+    message_t *msg = (message_t *)S0;
+
+    stdio_mutex.lock();
+    msgDump( msg );
+    stdio_mutex.unlock();
+
+    Pop;
 }
 
 void cpp_extrasLoad() {

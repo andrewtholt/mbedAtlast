@@ -2,7 +2,7 @@
  * AUTHOR: andrewh <andrewh>
  *   FILE: ./Small.cpp
  *   DATE: Sat Jun 13 13:36:06 2020
- *  DESCR: 
+ *  DESCR:
  ***********************************************************************/
 // #include "Small.h"
 #include "mbedSmall.h"
@@ -10,8 +10,8 @@
 
 /***********************************************************************
  *  Method: Small::Small
- *  Params: 
- * Effects: 
+ *  Params:
+ * Effects:
  ***********************************************************************/
 Small::Small() {
 }
@@ -19,8 +19,8 @@ Small::Small() {
 
 /***********************************************************************
  *  Method: Small::~Small
- *  Params: 
- * Effects: 
+ *  Params:
+ * Effects:
  ***********************************************************************/
 Small::~Small() {
 }
@@ -30,7 +30,7 @@ Small::~Small() {
  *  Method: Small::Get
  *  Params: std::string key
  * Returns: std::string
- * Effects: 
+ * Effects:
  ***********************************************************************/
 std::string Small::Get(std::string key) {
 
@@ -48,7 +48,7 @@ std::string Small::Get(std::string key) {
 
 bool Small::GetBool(std::string key) {
     bool state = false;
-    
+
     return state;
 }
 
@@ -56,7 +56,7 @@ bool Small::GetBool(std::string key) {
  *  Method: Small::Set
  *  Params: std::string key, std::string value
  * Returns: void
- * Effects: 
+ * Effects:
  ***********************************************************************/
 void Small::Set(std::string key, std::string value) {
     int cnt = db.count(key);
@@ -67,7 +67,7 @@ void Small::Set(std::string key, std::string value) {
         p->value = value;
 
         for(auto sub : db[key]->subscriber ) {
-            sendSet(sub, key, value );
+            sendSet(taskId::INVALID,(taskId)sub, key, value );
         }
     } else {
         db[key] = new datum(value);
@@ -79,9 +79,9 @@ void Small::Set(std::string key, std::string value) {
  *  Method: Small::sendSet
  *  Params: std::string key
  * Returns: void
- * Effects: 
+ * Effects:
  ***********************************************************************/
-void Small::sendSet(uint8_t id,std::string key, std::string value) {
+void Small::sendSet(taskId source, taskId dest, std::string key, std::string value) {
 //    std::cout << "========> Send set to " << to_string(id) << " Key "<< key << "=" << value << "\n";
 }
 
@@ -90,9 +90,9 @@ void Small::Sub(std::string key, uint8_t id) {
     int cnt = db.count(key);
     if (cnt > 0) {
         (db[key]->subscriber).insert(id);
-        
-        sendSet(id, key, db[key]->value);
-    } 
+
+        sendSet(taskId::INVALID, (taskId)id, key, db[key]->value);
+    }
 
 }
 

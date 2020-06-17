@@ -2,7 +2,7 @@
  * AUTHOR: andrewh <andrewh>
  *   FILE: .//parseMsg.cpp
  *   DATE: Mon Jun 15 15:21:01 2020
- *  DESCR: 
+ *  DESCR:
  ***********************************************************************/
 #include "parseMsg.h"
 #include "msg.h"
@@ -12,7 +12,7 @@ extern "C" {
 /***********************************************************************
  *  Method: parseMsg::parseMsg
  *  Params: Small *db
- * Effects: 
+ * Effects:
  ***********************************************************************/
 parseMsg::parseMsg(Small *db) {
     data = db;
@@ -21,8 +21,8 @@ parseMsg::parseMsg(Small *db) {
 
 /***********************************************************************
  *  Method: parseMsg::~parseMsg
- *  Params: 
- * Effects: 
+ *  Params:
+ * Effects:
  ***********************************************************************/
 parseMsg::~parseMsg() {
 }
@@ -32,7 +32,7 @@ parseMsg::~parseMsg() {
  *  Method: parseMsg::fromMsgToDb
  *  Params: message_t *msg
  * Returns: bool
- * Effects: 
+ * Effects:
  ***********************************************************************/
 bool parseMsg::fromMsgToDb(message_t *msg) {
     bool fail=true;
@@ -57,7 +57,7 @@ bool parseMsg::fromMsgToDb(message_t *msg) {
  *  Method: parseMsg::fromDbToMsg
  *  Params: message_t *msg
  * Returns: bool
- * Effects: 
+ * Effects:
  ***********************************************************************/
 bool parseMsg::fromDbToMsg(message_t *msg,taskId sender, char *key) {
     bool fail=true;
@@ -75,13 +75,12 @@ bool parseMsg::fromDbToMsg(message_t *msg,taskId sender, char *key) {
 
         fail=false;
     }
-
     return fail;
 }
 
-bool parseMsg::subscribe(message_t *msg, taskId sender, char *key) {
+bool parseMsg::mkSubMsg(message_t *msg, taskId sender, char *key) {
     bool fail=true;
-    
+
     std::string v = data->Get( key );
 
     if( v != "<NON>" ) {
@@ -93,8 +92,14 @@ bool parseMsg::subscribe(message_t *msg, taskId sender, char *key) {
 
         fail=false;
     }
-    
     return fail;
+}
+
+void parseMsg::mkGetMsg(message_t *msg, taskId sender, char *key) {
+    msg->Sender = sender;
+    msg->type = msgType::HI_LEVEL;
+    msg->op.hl_op = highLevelOperation::GET;
+    strncpy(msg->body.hl_body.topic, key, MAX_TOPIC);
 }
 
 taskId parseMsg::getSender(message_t *msg) {

@@ -33,7 +33,7 @@
 // #include "atldef.h"
 
 #ifdef ATH
-// 
+//
 // Socket includes
 //
 #ifdef SOCKETS
@@ -434,7 +434,7 @@ void ATH_Features() {
     atlastTxString((char *)"    WORDSUSED\r\n");
 #else
     atlastTxString((char *)"NOT WORDSUSED\r\n");
-#endif 
+#endif
 
 // ------------------
 #ifdef ATH
@@ -681,7 +681,7 @@ prim RT_test() {
 
 prim ATH_ms() {
     Sl(1);
-#ifdef LINUX 
+#ifdef LINUX
     // TODO: Fix this.
 #ifndef UCLINUX
     usleep((useconds_t)S0 * 1000);
@@ -848,7 +848,7 @@ prim athSend() {
     status = send(sock2, buffer, len, 0);
     Push=status;
 
-    flag = ( status < 0 ); 
+    flag = ( status < 0 );
     Push = flag;
 }
 
@@ -856,7 +856,7 @@ prim athRecv() {
     int             n;
     int             sock2;
     int             len;
-    int flag = 0; 
+    int flag = 0;
     char           *msg;
 
     Sl(3);
@@ -874,7 +874,7 @@ prim athRecv() {
     Push = n;
 }
 #endif
-// 
+//
 // Add \n to a string
 // Stack : pointer -- pointer
 //
@@ -883,7 +883,7 @@ prim athAddEOL() {
     strcat(ptr,"\n");
 }
 /*
-// 
+//
 // name sock -- str:value
 //
 prim athCmdGet() {
@@ -910,8 +910,8 @@ prim athCmdGet() {
         Push=0;
     }
 }
-// 
-// Stack: str:name str:value sock 
+//
+// Stack: str:name str:value sock
 //
 prim athCmdSet() {
     Sl(3);
@@ -1021,7 +1021,7 @@ int8_t readLineFromArray(uint8_t *src, uint8_t *dest) {
     int i;
     int8_t len=0;
     static uint32_t offset=0;
-    
+
     for(i=0;i<MAX_LINE;i++) {
         ch=*(src+(offset++));
         if ( ch == 0 ) {
@@ -1539,7 +1539,7 @@ prim FR_subCount() {
 
 
 prim FR_displayRecord() {
-    struct nlist *rec; 
+    struct nlist *rec;
     Sl(1);
     char localBuffer[80];
 
@@ -2325,8 +2325,8 @@ prim P_between() {
     S0=res;
 
 }
-// 
-// Stack: addr -- addrn 
+//
+// Stack: addr -- addrn
 //
 prim P_lstrip() {
     char *ptr=(char *)S0;
@@ -2823,7 +2823,7 @@ prim P_strcpy() 		      /* Copy string to address on stack */
     // However sometimes you want to write to memory that has been
     // allocated by malloc, or a hardware address.
     // NOTE Use with caution
-    // TODO Should I set ath_safe_memory to Truth after use ?  this means 
+    // TODO Should I set ath_safe_memory to Truth after use ?  this means
     // every acces to memory outside of heap would have to be prefixed with
     // 0 memsafe
     //
@@ -2909,9 +2909,9 @@ prim P_strform()		      /* Format integer using sprintf() */
         Hpc(S0);
         Hpc(S1);
     }
-    
+
     V sprintf((char *) S0, (char *) S1, S2);  // NOT EMBEDDED
-    
+
     Npop(3);
 }
 
@@ -3113,12 +3113,12 @@ prim P_fleq()			      /* Test less than or equal */
 prim P_fdot()			      /* Print floating point top of stack */
 {
     Sl(Realsize);
-    
+
 #ifdef MBED
     char buffer[80];
     sprintf(buffer,"%g ", REAL0);
 #endif
-    
+
     Realpop;
 }
 
@@ -3311,7 +3311,7 @@ prim P_dotparen() {
         stringlit = True;	      /* Set to print next string constant */
     } else {			      /* Otherwise, */
         /* print string literal in in-line code. */
-        sprintf(buffer,"%s", ((char *) ip) + 1);  
+        sprintf(buffer,"%s", ((char *) ip) + 1);
 #ifdef MBED
         atlastTxString(outBuffer);
 #endif
@@ -3337,7 +3337,7 @@ prim P_emit() {
 prim P_type() {
     char buffer[80];
     Sl(1);
-    
+
     if( ath_safe_memory == Truth) {
     	Hpc(S0);
     }
@@ -3352,7 +3352,7 @@ prim P_type() {
 }
 
 prim ATH_sift() {
-	char outBuffer[132];
+    char outBuffer[132];
 
     char *res=NULL;
 
@@ -3391,7 +3391,7 @@ prim P_words() {
 //    	strcat(outBuffer,"\r\n");
 
     atlastTxString(outBuffer);
-        
+
         dw = dw->wnext;
 #ifdef Keyhit
         if (kbquit()) {
@@ -4345,7 +4345,7 @@ prim P_abortq() {
 #ifdef MBED
         atlastTxString(buffer);
 #endif
-        
+
 #ifdef WALKBACK
         pwalkback();
 #endif /* WALKBACK */
@@ -4480,7 +4480,7 @@ prim ATH_char() {
 /* Take address of next word */
 prim P_tick() {
     int i;
-    char buffer[132]; 
+    char buffer[132];
 
     /* Try to get next symbol from the input stream.  If
        we can't, and we're executing a compiled word,
@@ -5991,7 +5991,7 @@ int atl_eval(char *sp) {
                             if (di->wcode == (codeptr) P_dodoes) {
 #ifdef FORGETDEBUG
                                 char buffer[40];
-                                sprintf(buffer," Forgetting DOES> word. "); 
+                                sprintf(buffer," Forgetting DOES> word. ");
 #ifdef MBED
                                 atlastTxString( buffer );
 #endif
@@ -6137,7 +6137,7 @@ int atl_eval(char *sp) {
                         hptr += l;
                     } else {
                         char buffer[80];
-                        sprintf(buffer,"%s", tokbuf); 
+                        sprintf(buffer,"%s", tokbuf);
 #ifdef MBED
                         atlastTxString( buffer );
 #endif
