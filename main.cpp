@@ -73,11 +73,9 @@ void ledControlTask(void) {
                     
                     db->Sub(k,(uint8_t)id);
                     break;
+                case highLevelOperation::UNSUB :
+                    break;
             }
-            /*
-            if (message->op.hl_op == highLevelOperation::SET) {
-            }
-            */
             
             mpool.free(message);    
         } 
