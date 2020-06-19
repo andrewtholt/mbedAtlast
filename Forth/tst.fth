@@ -26,3 +26,13 @@ variable msg
 ;
 
 
+: i2c-test
+    mkmsg msg !
+    DBASE "LED1" "OFF" add-record
+    msg-parser msg @ iam "LED1" db-to-msg 0= if
+        msg @ msg-dump cr
+        msg @ i2c@ send-msg
+        0 msg !
+    then
+
+;

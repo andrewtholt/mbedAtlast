@@ -8,49 +8,55 @@ extern Mutex stdio_mutex;
 
 void printIam(taskId iam) {
 
-    osThreadId_t me = ThisThread::get_id();
+//    osThreadId_t me = ThisThread::get_id();
 
-    atlastTxString((char *)"\nI am   : ");
+    atlastTxString((char *)"\r\nI am   : ");
     switch(iam) {
         case taskId::INVALID:
-            atlastTxString((char *)"INVALID\n");
+            atlastTxString((char *)"INVALID\r\n");
             break;
         case taskId::ATLAST:
-            atlastTxString((char *)"ATLAST\n");
+            atlastTxString((char *)"ATLAST\r\n");
             break;
         case taskId::LED_CTRL:
-            atlastTxString((char *)"LED_CTRL\n");
+            atlastTxString((char *)"LED_CTRL\r\n");
             break;
         case taskId::CTRL:
-            atlastTxString((char *)"CTRL\n");
+            atlastTxString((char *)"CTRL\r\n");
+            break;
+        case taskId::I2C:
+            atlastTxString((char *)"I2C\r\n");
             break;
         case taskId::LAST:
-            atlastTxString((char *)"LAST\n");
+            atlastTxString((char *)"LAST\r\n");
             break;
     }
 }
 
 void msgDump(message_t *msg) {
-    atlastTxString((char *)"\n\n");
+    atlastTxString((char *)"\r\n\r\n");
 
     atlastTxString((char *)"Sender : ");
     taskId s = msg->Sender;
 
     switch(s) {
         case taskId::INVALID:
-            atlastTxString((char *)"INVALID\n");
+            atlastTxString((char *)"INVALID\r\n");
             break;
         case taskId::ATLAST:
-            atlastTxString((char *)"ATLAST\n");
+            atlastTxString((char *)"ATLAST\r\n");
             break;
         case taskId::LED_CTRL:
-            atlastTxString((char *)"LED_CTRL\n");
+            atlastTxString((char *)"LED_CTRL\r\n");
             break;
         case taskId::CTRL:
-            atlastTxString((char *)"CTRL\n");
+            atlastTxString((char *)"CTRL\r\n");
+            break;
+        case taskId::I2C:
+            atlastTxString((char *)"I2C\r\n");
             break;
         case taskId::LAST:
-            atlastTxString((char *)"LAST\n");
+            atlastTxString((char *)"LAST\r\n");
             break;
     }
 
@@ -60,13 +66,13 @@ void msgDump(message_t *msg) {
 
     switch(t) {
         case msgType::INVALID:
-            atlastTxString((char *)"INVALID\n");
+            atlastTxString((char *)"INVALID\r\n");
             break;
         case msgType::HI_LEVEL:
-            atlastTxString((char *)"HI_LEVEL\n");
+            atlastTxString((char *)"HI_LEVEL\r\n");
             break;
         case msgType::LO_LEVEL:
-            atlastTxString((char *)"LO_LEVEL\n");
+            atlastTxString((char *)"LO_LEVEL\r\n");
             break;
     }
 
@@ -80,27 +86,27 @@ void msgDump(message_t *msg) {
 
         switch(op) {
             case highLevelOperation::NOP:
-                atlastTxString((char *)"NOP\n");
+                atlastTxString((char *)"NOP\r\n");
                 printTopic = false;
                 printMsg = false;
                 break;
             case highLevelOperation::GET:
-                atlastTxString((char *)"GET\n");
+                atlastTxString((char *)"GET\r\n");
                 printTopic = true;
                 printMsg = false;
                 break;
             case highLevelOperation::SET:
-                atlastTxString((char *)"SET\n");
+                atlastTxString((char *)"SET\r\n");
                 printTopic = true;
                 printMsg = true;
                 break;
             case highLevelOperation::SUB:
-                atlastTxString((char *)"SUB\n");
+                atlastTxString((char *)"SUB\r\n");
                 printTopic = true;
                 printMsg = false;
                 break;
             case highLevelOperation::UNSUB:
-                atlastTxString((char *)"UNSUB\n");
+                atlastTxString((char *)"UNSUB\r\n");
                 printTopic = true;
                 printMsg = false;
                 break;
@@ -109,13 +115,13 @@ void msgDump(message_t *msg) {
         if( printTopic ) {
             atlastTxString((char *)"Topic  : ");
             atlastTxString( msg->body.hl_body.topic);
-            atlastTxByte('\n');
+            atlastTxByte('\r\n');
         }
 
         if( printMsg ) {
             atlastTxString((char *)"Msg    : ");
             atlastTxString( msg->body.hl_body.msg);
-            atlastTxByte('\n');
+            atlastTxByte('\r\n');
         }
     }
 }

@@ -5,7 +5,10 @@ void crap();
 void cpp_extrasLoad();
 void mkMessage();
 void setSender();
+void setType();
+
 void setTopic();
+void setOp();
 void setMsg();
 void sendMsg();
 
@@ -15,6 +18,12 @@ void getLEDId();
 void getLowLevelType();
 void getHighLevelType();
 
+void opNop();
+void opGet();
+void opSet();
+void opSub();
+void opUnsub();
+
 void MBED_addRecord();
 void MBED_lookup();
 
@@ -23,24 +32,40 @@ void MBED_get();
 
 void MBED_dbToMsg();
 void MBED_msgDump();
+void getI2CId() ;
 
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
 
-    {(char *)"0HI@", getHighLevelType},
-    {(char *)"0LO@", getLowLevelType},
+    {(char *)"0HI-LEVEL", getHighLevelType},
+    {(char *)"0LO-LEVEL", getLowLevelType},
+    {(char *)"0NOP", opNop},
+    {(char *)"0GET", opGet},
+    {(char *)"0SET", opSet},
+    {(char *)"0SUB", opSub},
+    {(char *)"0UNSUB", opUnsub},
+
     {(char *)"0MKMSG", mkMessage},
+
     {(char *)"0SET-SENDER", setSender},
+    {(char *)"0SET-TYPE", setType},
+    {(char *)"0SET-OP", setOp},
     {(char *)"0SET-TOPIC", setTopic},
     {(char *)"0SET-MSG", setMsg},
+
     {(char *)"0SEND-MSG", sendMsg},
+
     {(char *)"0MAIN@", getMainId},
     {(char *)"0LED@", getLEDId},
-
+    {(char *)"0I2C@", getI2CId},
+    // 
+    // database operations
+    //
     {(char *)"0ADD-RECORD",  MBED_addRecord},
     {(char *)"0LOOKUP",  MBED_lookup},
-    {(char *)"0SUBSCRIBE", MBED_subscribe},
-    {(char *)"0GET", MBED_get},
+
+    {(char *)"0SUBSCRIBE-MSG", MBED_subscribe},
+    {(char *)"0GET-MSG", MBED_get},
     {(char *)"0DB-TO-MSG",  MBED_dbToMsg},
     {(char *)"0MSG-DUMP",  MBED_msgDump},
 

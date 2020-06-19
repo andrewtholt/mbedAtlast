@@ -46,6 +46,26 @@ prim getHighLevelType() {
     Push = (int) msgType::HI_LEVEL;
 }
 
+prim opNop() {
+    Push = (int) highLevelOperation::NOP;
+}
+
+prim opGet() {
+    Push = (int) highLevelOperation::GET;
+}
+
+prim opSet() {
+    Push = (int) highLevelOperation::SET;
+}
+
+prim opSub() {
+    Push = (int) highLevelOperation::SUB;
+}
+
+prim opUnsub() {
+    Push = (int) highLevelOperation::UNSUB;
+}
+
 prim getMainId() {
     Push = (int) taskId::ATLAST;
 }
@@ -54,15 +74,41 @@ prim getLEDId() {
     Push = (int) taskId::LED_CTRL;
 }
 
+prim getI2CId() {
+    Push = (int) taskId::I2C;
+}
+
 prim mkMessage() {
     message_t *msg = mpool.calloc();
     Push = (stackitem) msg;
 }
-
+// 
+// Stack : Sender msg --
+//
 prim setSender() {
     message_t *msg = (message_t *)S0;
 
     msg->Sender = (taskId)S1;
+
+    Pop2;
+}
+// 
+// Stack : type msg --
+//
+prim setType() {
+    message_t *msg = (message_t *)S0;
+
+    msg->type = (msgType)S1;
+
+    Pop2;
+}
+// 
+// Stack : type msg --
+//
+prim setOp() {
+    message_t *msg = (message_t *)S0;
+
+    msg->op.hl_op = (highLevelOperation)S1;
 
     Pop2;
 }
@@ -111,7 +157,9 @@ prim MBED_lookup() {
     Pop;
     S0=(stackitem)dataBuffer;
 }
-
+// 
+// Find a record in the db and populate a message.
+//
 prim MBED_dbToMsg() {
     parseMsg *parse = (parseMsg *)S3;
     message_t *msg = (message_t *)S2;

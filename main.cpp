@@ -159,19 +159,9 @@ int getline(Serial *port, uint8_t *b, const uint8_t len) {
 }
 
 void  atlast(Small *db) {
-    // char t[132];
     int8_t len;
-    //    Serial pc(USBTX, USBRX);
-
-    pc = new Serial(USBTX, USBRX);
-
     bool runFlag=true;
-
     uint8_t lineBuffer[MAX_LINE];
-    // dictword *var;
-    //    int *tst;
-
-    pc->baud(115200);
 
     atl_init();
 
@@ -229,7 +219,7 @@ void atlastRx(Small *db) {
     parseMsg *p = new parseMsg( db );
 
     while(true) {
-        osEvent evt = tasks[iam].get(  );
+        osEvent evt = tasks[iam].get();
 
         if (evt.status == osEventMessage ) {
             message_t *message = (message_t*)evt.value.p;
@@ -247,25 +237,62 @@ void atlastRx(Small *db) {
 
             mpool.free(message);
         }
-
-//        ThisThread::yield();
     }
 }
 
 int main() {
+
+    pc = new Serial(USBTX, USBRX);
+    pc->baud(115200);
+
+    osStatus status ;
     Small *atlastDb = new Small();
 
+    Thread i2cThread;
+    extern void i2cTask();
+
+    status = i2cThread.start(callback(i2cTask));
+
+    stdio_mutex.lock();
+    if (status == osOK) {
+        atlastTxString((char *)"i2cThread started\r\n");
+    } else {
+        atlastTxString((char *)"i2cThread failed\r\n");
+    }
+    stdio_mutex.unlock();
+
     Thread ledThread;
-    ledThread.start(ledControlTask);
+    status = ledThread.start(ledControlTask);
+    stdio_mutex.lock();
+    if (status == osOK) {
+        atlastTxString((char *)"ledThread started\r\n");
+    } else {
+        atlastTxString((char *)"ledThread failed\r\n");
+    }
+    stdio_mutex.unlock();
 
     Thread atlastRxThread;
-    atlastRxThread.start(callback(atlastRx,atlastDb));
+    status = atlastRxThread.start(callback(atlastRx,atlastDb));
+    stdio_mutex.lock();
+    if (status == osOK) {
+        atlastTxString((char *)"atlastRxThread started\r\n");
+    } else {
+        atlastTxString((char *)"atlastRxThread failed\r\n");
+    }
+    stdio_mutex.unlock();
 
     Thread atlastThread;
-    atlastThread.start(callback(atlast,atlastDb));
+    status = atlastThread.start(callback(atlast,atlastDb));
+    stdio_mutex.lock();
+    if (status == osOK) {
+        atlastTxString((char *)"atlastRxThread started\r\n");
+    } else {
+        atlastTxString((char *)"atlastRxThread failed\r\n");
+    }
+    stdio_mutex.unlock();
 
+    atlastRxThread.join();
     atlastThread.join();
-
     ledThread.join();
 }
 

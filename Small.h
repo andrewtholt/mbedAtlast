@@ -26,6 +26,7 @@ class Small {
 
         void Set(std::string key, std::string value);
         void Sub(std::string key, uint8_t id);
+        uint8_t getSubCount(std::string key);
         void dump();
 
         virtual void sendSet(taskId source, taskId dest,std::string key, std::string value);

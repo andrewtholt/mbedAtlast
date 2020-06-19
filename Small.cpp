@@ -85,6 +85,14 @@ void Small::sendSet(taskId source, taskId dest, std::string key, std::string val
 //    std::cout << "========> Send set to " << to_string(id) << " Key "<< key << "=" << value << "\n";
 }
 
+uint8_t Small::getSubCount(std::string key) {
+    uint8_t sc = 0;
+
+    sc = (uint8_t)(db[key]->subscriber).size();
+
+    return sc;
+}
+
 void Small::Sub(std::string key, uint8_t id) {
 
     int cnt = db.count(key);

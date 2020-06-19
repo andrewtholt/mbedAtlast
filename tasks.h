@@ -5,6 +5,7 @@ enum class taskId {
     ATLAST,
     LED_CTRL,
     CTRL,
+    I2C,
     LAST
 } ;
 
