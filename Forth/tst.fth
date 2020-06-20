@@ -9,7 +9,7 @@ variable msg
     DBASE "LED1" "ON" add-record
     msg-parser msg @ iam "LED1" db-to-msg 0= if
         msg @ msg-dump cr
-        msg @ led@ send-msg
+        led@ msg @ send-msg
         0 msg !
     then
 ;
@@ -20,7 +20,7 @@ variable msg
     DBASE "LED1" "OFF" add-record
     msg-parser msg @ iam "LED1" db-to-msg 0= if
         msg @ msg-dump cr
-        msg @ led@ send-msg
+        led@ msg @ send-msg
         0 msg !
     then
 ;
@@ -31,7 +31,7 @@ variable msg
     DBASE "LED1" "OFF" add-record
     msg-parser msg @ iam "LED1" db-to-msg 0= if
         msg @ msg-dump cr
-        msg @ i2c@ send-msg
+        i2c@ msg @ send-msg
         0 msg !
     then
 

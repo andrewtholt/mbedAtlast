@@ -27,11 +27,12 @@ extern "C" {
 prim crap() {
 }
 //
-// stack: <msg> <task id> --
+// stack: <task-id> <msg> --
 //
 prim sendMsg() {
-    int dest = (int) S0;
-    message_t *out = (message_t *)S1;
+
+    int dest = (int) S1;
+    message_t *out = (message_t *)S0;
 
     tasks[dest].put(out);
 

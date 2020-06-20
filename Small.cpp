@@ -14,6 +14,7 @@
  * Effects:
  ***********************************************************************/
 Small::Small() {
+    haveSubscribersFlag = false;
 }
 
 
@@ -84,7 +85,10 @@ void Small::Set(std::string key, std::string value) {
 void Small::sendSet(taskId source, taskId dest, std::string key, std::string value) {
 //    std::cout << "========> Send set to " << to_string(id) << " Key "<< key << "=" << value << "\n";
 }
-
+// 
+// Return number of subscribers to key
+// TODO Would a boolean suffice ?
+//
 uint8_t Small::getSubCount(std::string key) {
     uint8_t sc = 0;
 
@@ -92,16 +96,39 @@ uint8_t Small::getSubCount(std::string key) {
 
     return sc;
 }
+// 
+// Return true if I have any subscribers to anything.
+//
+bool Small::haveSubscribers() {
+    return haveSubscribersFlag;
+}
 
 void Small::Sub(std::string key, uint8_t id) {
 
     int cnt = db.count(key);
     if (cnt > 0) {
+        haveSubscribersFlag=true;
         (db[key]->subscriber).insert(id);
 
         sendSet(taskId::INVALID, (taskId)id, key, db[key]->value);
     }
 
+}
+// 
+// Unsubscribe from key, and set haveSubscriber flag appropriately.
+//
+void Small::Unsub(std::string key, uint8_t id) {
+    
+    int cnt = (db[key]->subscriber).count(id);
+    if ( cnt == 1) {
+        (db[key]->subscriber).erase( id );
+
+        if((db[key]->subscriber).size() == 0) {
+            haveSubscribersFlag=false;
+        } else {
+            haveSubscribersFlag=true;
+        }
+    }
 }
 
 void Small::dump() {

@@ -9,7 +9,7 @@ variable msg
 
     msg-parser msg @ iam "COUNT" subscribe-msg 0= if
         msg @ msg-dump
-        msg @ led@ send-msg
+        led@ msg @ send-msg
 
         0 msg !
     then
