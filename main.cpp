@@ -1,7 +1,8 @@
 #include "mbed.h"
-
+/*
 #include "SDBlockDevice.h"
 #include "LittleFileSystem.h"
+*/
 
 #include <errno.h>
 
@@ -10,6 +11,7 @@
 // #include "Small.h"
 #include "mbedSmall.h"
 #include "atlastUtils.h"
+
 
 #define ECHO
 extern "C" {
@@ -42,8 +44,10 @@ MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
+/*
 SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
 LittleFileSystem fileSystem("fs");
+*/
 
 void ledControlTask(void) {
 
@@ -51,6 +55,7 @@ void ledControlTask(void) {
     taskId iam = taskId::LED_CTRL;
 
     bool runFlag = true;
+
 
     DigitalOut myLed(LED1);
 
@@ -181,6 +186,7 @@ void  atlast(Small *db) {
         atl_eval((char *)lineBuffer);
     } while(len >= 0);
 
+    extern void cpp_extrasLoad();
     cpp_extrasLoad();
 
     /*
@@ -205,7 +211,10 @@ void  atlast(Small *db) {
     sprintf((char *)lineBuffer,": MSG-PARSER %llu ;",(long long unsigned int) new parseMsg( db ));
     atl_eval((char *)lineBuffer);
 
+        stdio_mutex.lock();
     ATH_banner();
+    initFs();
+        stdio_mutex.unlock();
 
     while(runFlag) {
         (void)memset(outBuffer,0,sizeof(outBuffer));
@@ -251,10 +260,11 @@ void atlastRx(Small *db) {
 }
 
 int main() {
-
+    extern void initFs();
     pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
 
+    /*
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
     atlastTxString((char *)"Mounting the filesystem... \r\n");
 
@@ -277,6 +287,9 @@ int main() {
     if(!fd) {
         atlastTxString((char *)" failed to open file.\r\n");
     }
+    */
+
+//    initFs();
 
     osStatus status ;
     Small *atlastDb = new Small();

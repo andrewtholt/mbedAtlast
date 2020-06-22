@@ -20,6 +20,11 @@
 
 #ifndef __ATLDEF
 #define __ATLDEF
+
+#ifndef V
+#define V (void )
+#endif
+
 #include <stdint.h>
 #include "atlast.h"                   /* Define user linkage structures */
 

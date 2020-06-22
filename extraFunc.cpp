@@ -2,6 +2,14 @@
 #include "mbed.h"
 #include "msg.h"
 #include "tasks.h"
+#include "SDBlockDevice.h"
+#include "LittleFileSystem.h"
+#include <stdio.h>
+#include <errno.h>
+
+SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
+LittleFileSystem fileSystem("fs");
+
 // #include "Small.h"
 #include "mbedSmall.h"
 #include "parseMsg.h"
@@ -17,12 +25,13 @@ extern Mutex stdio_mutex;
 
 char dataBuffer[255];  //Somewhat to put data.
 
-using namespace std;
 
 extern "C" {
     #include "extraFunc.h"
     #include "atldef.h"
 }
+
+using namespace std;
 
 prim crap() {
 }
@@ -224,5 +233,143 @@ prim subscribers() {
 
 void cpp_extrasLoad() {
     atl_primdef( cpp_extras );
+}
+
+void initFs() {
+    atlastTxString((char *)"\r\nSetup filesystem\r\n");
+    atlastTxString((char *)"Mounting the filesystem... \r\n");
+
+    int err = fileSystem.mount(&blockDevice);
+
+    if(err) {
+        atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
+        err = fileSystem.reformat(&blockDevice);
+
+        if(err) {
+            error("error: %s (%d)\r\n", strerror(-err), err);
+        } else {
+            atlastTxString((char *)"... done.\r\n");
+        }
+    } else {
+        atlastTxString((char *)"... done.\r\n");
+    }
+
+    FILE *fd=fopen("/fs/numbers.txt", "r+");
+    if(!fd) {
+        atlastTxString((char *)" failed to open file.\r\n");
+    } else {
+        atlastTxString((char *)"closing file.\r\n");
+        fclose(fd);
+    }
+}
+
+/* Open file: fname fmodes fd -- flag */
+prim P_fopen()	{
+    stackitem stat;
+
+//    Sl(3);
+//    Hpc(S2);
+//    Hpc(S0);
+
+//    Isfile(S0);
+
+    /*
+    FILE *fd=fopen("/fs/numbers.txt", "r+");
+    if(!fd) {
+        atlastTxString((char *)" failed to fopen file.\r\n");
+    } else {
+        fclose(fd);
+    }
+    */
+
+    char * fname = (char *) S2;
+    char *mode =(char *)S1;
+
+    FILE *fd = fopen(fname,mode);
+
+    if (fd == NULL) {
+        stat = false;
+    } else {
+        *(((stackitem *) S0) + 1) = (stackitem) fd;
+        stat = true;
+    }
+
+    Pop2;
+    S0 = stat;
+}
+
+/* Was ------- File read: fd len buf -- length */
+/* ATH Now --- File read: buf len fd -- length */
+prim P_fread() {
+    /* Was ------- File read: fd len buf -- length */
+    /* ATH Now --- File read: buf len fd -- length */
+//    Sl(3);
+//    Hpc(S0);
+
+//     Isfile(S0);
+//    Isopen(S0);
+    // TODO This is stupid, it is inconsisitent with write.
+    // The stack order should follow the C convention.
+    // S2 = fread((char *) S0, 1, ((int) S1), FileD(S2));
+//    S2 = fread((char *) S2, 1, ((int) S1), FileD(S0));
+
+    FILE *fd = FileD(S0);
+    int len = (int)S1;
+    void *buffer = (void *)S2;
+
+//    size_t ret= fread(buffer, len,1, fd);
+    size_t ret= fread(buffer, 1,len, fd);
+
+    Pop2;
+
+    S0 = (stackitem) ret;
+}
+
+/* Close file: fd -- */
+prim P_fclose() {
+//    Sl(1);
+//    Hpc(S0);
+
+//    Isfile(S0);
+//    Isopen(S0);
+    V fclose(FileD(S0));
+
+    *(((stackitem *) S0) + 1) = (stackitem) NULL;
+    Pop;
+}
+
+// was : File write: len buf fd -- length
+// Is : write: buff, size, fd -- length
+prim P_fwrite() {
+//    Sl(3);
+//    Hpc(S2);
+//    Isfile(S0);
+
+//    Isopen(S0);
+
+    FILE *fd = FileD(S0);
+    int len = (int)S1;
+    void *buffer = (void *)S2;
+
+    size_t ret= fwrite(buffer, 1,len, fd);
+//    S2 = fwrite((char *) S1, 1, ((int) S2), FileD(S0));
+    Pop2;
+
+    S0 = (stackitem) ret;
+}
+
+prim P_fflush() {
+    FILE *fd = FileD(S0);
+    fflush(fd);
+    Pop;
+}
+
+// fd loc --
+prim P_fseek() {
+    int pos = S0;
+    FILE *fd = FileD(S1);
+
+    (void) fseek(fd,pos,SEEK_SET);
+    Pop2;
 }
 

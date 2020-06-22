@@ -3424,14 +3424,15 @@ prim P_file()			      /* Declare file */
 }
 
 prim P_mkdir() {
-	mode_t mode=0666; // By default make it globally accesible.
+    mode_t mode=0666; // By default make it globally accesible.
 }
 
 prim P_rmdir() {
 }
 
-prim P_fopen()			      /* Open file: fname fmodes fd -- flag */
-{
+/* Open file: fname fmodes fd -- flag */
+/*
+prim P_fopen()	{
     stackitem stat;
 
     Sl(3);
@@ -3445,7 +3446,6 @@ prim P_fopen()			      /* Open file: fname fmodes fd -- flag */
     char * fname = (char *) S2;
     char *mode =(char *)S1;
 
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
     if(!fd) {
         error("error: %s (%d)\r\n", strerror(errno), -errno);
     }
@@ -3462,7 +3462,9 @@ prim P_fopen()			      /* Open file: fname fmodes fd -- flag */
     Pop2;
     S0 = stat;
 }
+*/
 
+#if 0
 prim P_fclose() 		      /* Close file: fd -- */
 {
     Sl(1);
@@ -3475,6 +3477,7 @@ prim P_fclose() 		      /* Close file: fd -- */
     *(((stackitem *) S0) + 1) = (stackitem) NULL;
     Pop;
 }
+#endif
 
 prim P_fdelete()		      /* Delete file: fname -- flag */
 {
@@ -3516,6 +3519,7 @@ prim P_fputline()		      /* Put line: string fd -- flag */
     Pop;
 }
 
+#if 0
 prim P_fread()			      {
     /* Was ------- File read: fd len buf -- length */
     /* ATH Now --- File read: buf len fd -- length */
@@ -3532,8 +3536,8 @@ prim P_fread()			      {
     Pop2;
 }
 
-prim P_fwrite() 		      /* File write: len buf fd -- length */
-{
+/* File write: len buf fd -- length */
+prim P_fwrite() {
     Sl(3);
     Hpc(S2);
     Isfile(S0);
@@ -3542,6 +3546,7 @@ prim P_fwrite() 		      /* File write: len buf fd -- length */
     S2 = fwrite((char *) S1, 1, ((int) S2), FileD(S0));
     Pop2;
 }
+#endif
 
 prim P_fgetc()			      /* File get character: fd -- char */
 {
@@ -3568,6 +3573,7 @@ prim P_ftell()			      /* Return file position:	fd -- pos */
     S0 = (stackitem) ftell(FileD(S0));
 }
 
+#if 0
 prim P_fseek()			      /* Seek file:  offset base fd -- */
 {
     Sl(3);
@@ -3586,6 +3592,7 @@ prim P_fseek()			      /* Seek file:  offset base fd -- */
     Npop(2);
     S0 = roffset;
 }
+#endif
 
 prim P_access() {
 	Sl(2);
@@ -5062,19 +5069,19 @@ static struct primfcn primt[] = {
     {"0(MKDIR)", P_mkdir},
     {"0(RMDIR)", P_rmdir},
 
-    {"0FACCESS", P_fopen},
-    {"0FOPEN", P_fopen},
+//    {"0FACCESS", P_fopen},
+//    {"0FOPEN", P_fopen},
     {"0ACCESS", P_access},
-    {"0FCLOSE", P_fclose},
+//    {"0FCLOSE", P_fclose},
     {"0UNLINK", P_fdelete},
     {"0FGETS", P_fgetline},
     {"0FPUTS", P_fputline},
-    {"0FREAD", P_fread},
-    {"0FWRITE", P_fwrite},
+//    {"0FREAD", P_fread},
+//    {"0FWRITE", P_fwrite},
     {"0FGETC", P_fgetc},
     {"0FPUTC", P_fputc},
     {"0FTELL", P_ftell},
-    {"0FSEEK", P_fseek},
+//    {"0FSEEK", P_fseek},
     {"0FLOAD", P_fload},
     {"0$INCLUDE", P_include},
     {(char *)"0PWD", ATH_pwd},
