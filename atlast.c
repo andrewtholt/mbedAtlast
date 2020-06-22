@@ -12,6 +12,8 @@
 
 */
 #include <errno.h>
+#include "io.h"
+
 #ifdef FREERTOS
 #include "tim.h"
 #include "FreeRTOS.h"
@@ -227,6 +229,7 @@ stackitem *heapmax;	      /* Heap maximum excursion */
 
 
 #ifdef FILEIO
+
 static char *fopenmodes[] = {
 #ifdef FBmode
 #define FMspecial
@@ -305,6 +308,9 @@ STATIC void notcomp(), divzero();
 #ifdef WALKBACK
 STATIC void pwalkback();
 #endif
+
+void testing() {
+}
 
 prim ATH_Token() {
     V token(&instream);
@@ -565,20 +571,18 @@ prim ATH_banner() {
 #endif
 }
 
-#ifdef FREERTOS
 prim ATH_perror() {
-	char *msg;
+    char *msg;
 
-	Sl(1);
-	So(0);
+    Sl(1);
+    So(0);
 
-	atlastTxBuffer(console, (uint8_t *)S0) ;
-	atlastTxBuffer(console, (uint8_t *)":") ;
-	msg = strerror(errno);
-	atlastTxBuffer(console, (uint8_t *)msg) ;
-	P_cr();
+    atlastTxString( (char  *)S0) ;
+    atlastTxString((char *)":") ;
+    msg = strerror(errno);
+    atlastTxString( (char *)msg) ;
+    P_cr();
 }
-#endif
 
 prim RT_dir() {
     Sl(1);
@@ -1964,7 +1968,7 @@ prim ATH_flushSerialPort() {
 /* Gag me with a spoon!  Does no compiler but Turbo support
 #if defined(x) || defined(y) ?? */
 #ifdef EXPORT
-#define FgetspNeeded
+// #define FgetspNeeded
 #endif
 #ifdef FILEIO
     #ifndef FgetspNeeded
@@ -3421,27 +3425,10 @@ prim P_file()			      /* Declare file */
 
 prim P_mkdir() {
 	mode_t mode=0666; // By default make it globally accesible.
-#ifdef LINUX
-	S0=-1;	// Failed, unimplemented.
-#endif
-
-#if defined(FREERTOS) && defined(YAFFS)
-// int yaffs_mkdir(const YCHAR *path, mode_t mode)
-	S0 = yaffs_mkdir((char *)S0, mode);
-#endif
 }
 
 prim P_rmdir() {
-#ifdef LINUX
-	S0=-1;	// Failed, unimplemented.
-#endif
-
-#if defined(FREERTOS) && defined(YAFFS)
-// int yaffs_mkdir(const YCHAR *path, mode_t mode)
-	S0 = yaffs_rmdir((char *)S0);
-#endif
 }
-
 
 prim P_fopen()			      /* Open file: fname fmodes fd -- flag */
 {
@@ -3450,26 +3437,27 @@ prim P_fopen()			      /* Open file: fname fmodes fd -- flag */
     Sl(3);
     Hpc(S2);
     Hpc(S0);
-#ifdef LINUX
-    Isfile(S0);
-    FILE *fd = fopen((char *) S2, fopenmodes[S1]);
+
+//    Isfile(S0);
+
+//    FILE *fd = fopen((char *) S2, fopenmodes[S1]);
+
+    char * fname = (char *) S2;
+    char *mode =(char *)S1;
+
+    FILE *fd=fopen("/fs/numbers.txt", "r+");
+    if(!fd) {
+        error("error: %s (%d)\r\n", strerror(errno), -errno);
+    }
+
+//    FILE *fd = fopen(fname, mode);
+
     if (fd == NULL) {
         stat = Falsity;
     } else {
         *(((stackitem *) S0) + 1) = (stackitem) fd;
         stat = Truth;
     }
-#endif
-
-#if defined(FREERTOS) && defined(YAFFS)
-    int fd = yaffs_open((char *)S2,(int)S1,S_IREAD | S_IWRITE);
-    if( fd < 0) {
-        stat = Truth;
-    } else {
-        *(((stackitem *) S0) + 1) = (stackitem) fd;
-        stat = Falsity;
-    }
-#endif
 
     Pop2;
     S0 = stat;
@@ -3479,17 +3467,10 @@ prim P_fclose() 		      /* Close file: fd -- */
 {
     Sl(1);
     Hpc(S0);
-#ifdef LINUX
+
     Isfile(S0);
     Isopen(S0);
     V fclose(FileD(S0));
-#endif
-
-#if defined(FREERTOS) && defined(YAFFS)
-    int fd = *(((stackitem *) S0) + 1);
-
-    yaffs_close( fd );
-#endif
 
     *(((stackitem *) S0) + 1) = (stackitem) NULL;
     Pop;
@@ -3540,27 +3521,14 @@ prim P_fread()			      {
     /* ATH Now --- File read: buf len fd -- length */
     Sl(3);
     Hpc(S0);
-#ifdef LINUX
+
     Isfile(S0);
     Isopen(S0);
     // TODO This is stupid, it is inconsisitent with write.
     // The stack order should follow the C convention.
     // S2 = fread((char *) S0, 1, ((int) S1), FileD(S2));
     S2 = fread((char *) S2, 1, ((int) S1), FileD(S0));
-#endif
-#if defined(FREERTOS) && defined(YAFFS)
-    int fd;
-    char *buff;
-    int len;
 
-    fd = FileD(S0);
-    buff = (char *)S2;
-    len = (int)S1;
-
-
-//    S2 = yaffs_read((int)FileY(S0), (char *)S2,(int)S1);
-    S2 = yaffs_read(fd, buff, len);
-#endif
     Pop2;
 }
 
@@ -3569,16 +3537,9 @@ prim P_fwrite() 		      /* File write: len buf fd -- length */
     Sl(3);
     Hpc(S2);
     Isfile(S0);
-#ifdef LINUX
+
     Isopen(S0);
     S2 = fwrite((char *) S1, 1, ((int) S2), FileD(S0));
-#endif
-#if defined(FREERTOS) && defined(YAFFS)
-    int fd = *(((stackitem *) S0) + 1);
-
-//    S2 = yaffs_write((int)FileY(S0), (char *)S1,(int)S2);
-    S2 = yaffs_write(fd, (char *)S2,(int)S1);
-#endif
     Pop2;
 }
 
@@ -3702,16 +3663,9 @@ prim P_fload()			      /* Load source file:  fd -- evalstat */
 prim P_include() {
     int estat;
     Sl(1);
-#if defined(LINUX) || defined(DARWIN)
     FILE *fd;
 
-
     fd = fopen((char *)S0, "r") ;
-#endif
-#if defined(FREERTOS) && defined(YAFFS)
-    char *fname = (char *)S0;
-    int fd = yaffs_open(fname,O_RDONLY,0);
-#endif
 
     if(!fd) {
         perror("INCLUDE fopen");
@@ -3719,12 +3673,9 @@ prim P_include() {
         return;
     }
     estat = atl_load(fd);
-#ifdef LINUX
+
     fclose(fd);
-#endif
-#if defined(FREERTOS) && defined(YAFFS)
-    yaffs_close(fd);
-#endif
+
     Pop;
 }
 
@@ -4890,6 +4841,7 @@ static struct primfcn primt[] = {
     {"0R>", P_rfrom},
     {"0R@", P_rfetch},
     {"0TOKEN", ATH_Token},
+    {"0ERRNO", ATH_errno},
 
 #ifdef SHORTCUTA
     {"01+", P_1plus},
@@ -5089,7 +5041,7 @@ static struct primfcn primt[] = {
     {"0TYPE", P_type},
     {"0WORDS", P_words},
     {"0$SIFT", ATH_sift},
-	{"0EMIT", P_emit},
+    {"0EMIT", P_emit},
 #endif /* CONIO */
 #ifdef LINUX
     {"0FD-READ", P_fdRead},
@@ -5146,24 +5098,24 @@ static struct primfcn primt[] = {
 	{(char *)"0SOCKET-RECV",athRecv},
 	{(char *)"0ADD-EOL",athAddEOL},
 	{(char *)"0CMD-GET",athCmdGet},
-	{(char *)"0CMD-SET",athCmdSet},
+    {(char *)"0CMD-SET",athCmdSet},
 #endif
-	{(char *)"0ON",ATH_on},
-	{(char *)"0OFF",ATH_off},
-	{(char *)"0MKBUFFER",ATH_mkBuffer},
-	{(char *)"0MEMSAFE", ATH_memsafe},
-	{(char *)"0?MEMSAFE",ATH_qmemsafe},
-	{(char *)"0DUMP",ATH_dump},
-	{(char *)"0FILL",ATH_fill},
-	{(char *)"0ERASE",ATH_erase},
-	{(char *)"0W@",ATH_wat},
-	{(char *)"0W!",ATH_wbang},
-	{(char *)"0W>CELL",ATH_16toCell},
+    {(char *)"0ON",ATH_on},
+    {(char *)"0OFF",ATH_off},
+    {(char *)"0MKBUFFER",ATH_mkBuffer},
+    {(char *)"0MEMSAFE", ATH_memsafe},
+    {(char *)"0?MEMSAFE",ATH_qmemsafe},
+    {(char *)"0DUMP",ATH_dump},
+    {(char *)"0FILL",ATH_fill},
+    {(char *)"0ERASE",ATH_erase},
+    {(char *)"0W@",ATH_wat},
+    {(char *)"0W!",ATH_wbang},
+    {(char *)"0W>CELL",ATH_16toCell},
 
-	{(char *)"0HEX",ATH_hex},
-	{(char *)"0DECIMAL",ATH_dec},
-	{(char *)"0BYE",ATH_bye},
-	{(char *)"0?FILEIO",ATH_qfileio},
+    {(char *)"0HEX",ATH_hex},
+    {(char *)"0DECIMAL",ATH_dec},
+    {(char *)"0BYE",ATH_bye},
+    {(char *)"0?FILEIO",ATH_qfileio},
     {(char *)"0TIB", ATH_Instream},
 //    {(char *)"0TOKEN", ATH_Token},
     {(char *)"0?LINUX", ATH_qlinux},
@@ -5172,6 +5124,7 @@ static struct primfcn primt[] = {
 
 #endif
     {(char *)"0.FEATURES", ATH_Features},
+    {(char *)"0PERROR", ATH_perror},
 
 #ifdef ANSI
     {(char *)"0CELL", ANSI_cell},
@@ -5187,7 +5140,6 @@ static struct primfcn primt[] = {
     {(char *)"0CRCFILE", RT_crcfile},
     {(char *)"0TEST", RT_test},
 
-    {(char *)"0PERROR", ATH_perror},
 	{(char *)"0MKSCMD", FR_mkScmd},
 	{(char *)"0NAND-SETUP", FR_NANDSetup},
 	{(char *)"0NAND-BLOCKS", FR_NANDBlocks},
@@ -5856,7 +5808,7 @@ int atl_load(FILE *fp) {
 #ifdef MEMMESSAGE
 
         char buffer[80];
-        sprintf("\nRunaway `(' comment.\n");
+        sprintf(buffer,"\nRunaway `(' comment.\n");
 #ifdef MBED
         atlastTxString( buffer );
 #endif

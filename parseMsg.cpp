@@ -7,7 +7,8 @@
 #include "parseMsg.h"
 #include "msg.h"
 extern "C" {
-#include <string.h>
+    #include "io.h"
+    #include <string.h>
 };
 /***********************************************************************
  *  Method: parseMsg::parseMsg
@@ -88,7 +89,7 @@ bool parseMsg::mkSubMsg(message_t *msg, taskId sender, char *key) {
         msg->type = msgType::HI_LEVEL;
         msg->op.hl_op = highLevelOperation::SUB;
         strncpy(msg->body.hl_body.topic, key, MAX_TOPIC);
-//        strncpy(msg->body.hl_body.msg, v.c_str(), MAX_MSG);
+        //        strncpy(msg->body.hl_body.msg, v.c_str(), MAX_MSG);
 
         fail=false;
     }

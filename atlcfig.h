@@ -24,7 +24,7 @@
 #define DEFFIELDS             /* Definition field access for words */
 #define DOUBLE                /* Double word primitives (2DUP) */
 #define EVALUATE              /* The EVALUATE primitive */
-// #define FILEIO                /* File I/O primitives */
+#define FILEIO                /* File I/O primitives */
 // #define MATH                  /* Math functions */
 #define MEMMESSAGE            /* Print message for stack/heap errors */
 #define MEMSTAT
@@ -44,11 +44,11 @@
 #define NVRAMRC
 // #define PUBSUB              // Use the Small pub/sub system
 // #define PTHREAD             // Pthreaded pubsub
-// 
+//
 // #define Keyhit
-// 
+//
 // Stuff added by me
-// 
+//
 #define EXPORT
 
 

@@ -33,6 +33,7 @@ void MBED_get();
 void MBED_dbToMsg();
 void MBED_msgDump();
 void getI2CId() ;
+void subscribers();
 
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
@@ -58,7 +59,7 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0MAIN@", getMainId},
     {(char *)"0LED@", getLEDId},
     {(char *)"0I2C@", getI2CId},
-    // 
+    //
     // database operations
     //
     {(char *)"0ADD-RECORD",  MBED_addRecord},

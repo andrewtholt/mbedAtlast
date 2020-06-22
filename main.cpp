@@ -1,4 +1,10 @@
 #include "mbed.h"
+
+#include "SDBlockDevice.h"
+#include "LittleFileSystem.h"
+
+#include <errno.h>
+
 #include "msg.h"
 #include "tasks.h"
 // #include "Small.h"
@@ -29,16 +35,20 @@ extern "C" {
     char outBuffer[OUTBUFFER];
 }
 
+extern void initFs();
+
 Queue<message_t, 8> tasks[(int)taskId::LAST];
 MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
+SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
+LittleFileSystem fileSystem("fs");
+
 void ledControlTask(void) {
 
     int count=-1;
     taskId iam = taskId::LED_CTRL;
-    //    Queue<message_t, 8> myQueue = tasks[iam];
 
     bool runFlag = true;
 
@@ -244,6 +254,29 @@ int main() {
 
     pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
+
+    atlastTxString((char *)"\r\nSetup filesystem\r\n");
+    atlastTxString((char *)"Mounting the filesystem... \r\n");
+
+    int err = fileSystem.mount(&blockDevice);
+
+    if(err) {
+        atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
+        err = fileSystem.reformat(&blockDevice);
+
+        if(err) {
+            error("error: %s (%d)\r\n", strerror(-err), err);
+        } else {
+            atlastTxString((char *)"... done.\r\n");
+        }
+    } else {
+        atlastTxString((char *)"... done.\r\n");
+    }
+
+    FILE *fd=fopen("/fs/numbers.txt", "r+");
+    if(!fd) {
+        atlastTxString((char *)" failed to open file.\r\n");
+    }
 
     osStatus status ;
     Small *atlastDb = new Small();

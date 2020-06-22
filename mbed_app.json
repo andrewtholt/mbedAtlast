@@ -1,5 +1,8 @@
 {
     "target_overrides": {
+        "*": {
+            "target.components_add" : ["SD"]
+        },
         "K64F": {
             "platform.stdio-baud-rate": 9600
         }

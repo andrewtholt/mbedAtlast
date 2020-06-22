@@ -83,7 +83,7 @@ prim mkMessage() {
     message_t *msg = mpool.calloc();
     Push = (stackitem) msg;
 }
-// 
+//
 // Stack : Sender msg --
 //
 prim setSender() {
@@ -93,7 +93,7 @@ prim setSender() {
 
     Pop2;
 }
-// 
+//
 // Stack : type msg --
 //
 prim setType() {
@@ -103,7 +103,7 @@ prim setType() {
 
     Pop2;
 }
-// 
+//
 // Stack : type msg --
 //
 prim setOp() {
@@ -158,7 +158,7 @@ prim MBED_lookup() {
     Pop;
     S0=(stackitem)dataBuffer;
 }
-// 
+//
 // Find a record in the db and populate a message.
 //
 prim MBED_dbToMsg() {
@@ -217,6 +217,9 @@ prim MBED_msgDump() {
     stdio_mutex.unlock();
 
     Pop;
+}
+
+prim subscribers() {
 }
 
 void cpp_extrasLoad() {
