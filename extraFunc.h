@@ -37,10 +37,15 @@ void subscribers();
 void P_fopen();
 void P_fread();
 void P_fwrite();
+void P_fgetline();
 void P_fflush();
 void P_fseek();
 
 void P_fclose();
+
+void FS_remove();
+void FS_cat();
+void FS_ls();
 
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
@@ -80,10 +85,14 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0FOPEN", P_fopen},
     {(char *)"0FREAD", P_fread},
     {(char *)"0FWRITE", P_fwrite},
+    {(char *)"0FGETLINE", P_fgetline},
     {(char *)"0FSEEK", P_fseek},
     {(char *)"0FFLUSH", P_fflush},
-
     {(char *)"0FCLOSE", P_fclose},
+
+    {(char *)"0$CAT", FS_cat},
+    {(char *)"0LS", FS_ls},
+    {(char *)"0$RM", FS_remove},
 //    {NULL, (codeptr) 0}
     {nullptr, (codeptr) 0}
 };

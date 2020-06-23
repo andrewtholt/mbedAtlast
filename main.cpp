@@ -58,8 +58,7 @@ void ledControlTask(void) {
 
     bool runFlag = true;
 
-
-    DigitalOut myLed(LED1);
+    DigitalOut myLed(PA_13);
 
     mbedSmall *db = new mbedSmall();
     parseMsg *p = new parseMsg( db );
@@ -124,6 +123,7 @@ void ledControlTask(void) {
         }
 
         string ledState = db->Get("LED1");
+
         if (ledState == "ON") {
             if(myLed == 1) {
                 myLed = 0;

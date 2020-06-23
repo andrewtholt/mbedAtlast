@@ -8,9 +8,9 @@
 #include <errno.h>
 
 /*
-SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
-LittleFileSystem fileSystem("fs");
-*/
+ * SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
+ * LittleFileSystem fileSystem("fs");
+ */
 extern SDBlockDevice *blockDevice;
 extern LittleFileSystem *fileSystem;
 
@@ -34,6 +34,36 @@ extern "C" {
     #include "extraFunc.h"
     #include "atldef.h"
 }
+
+char *atl_fgetsp(char *s, int n, FILE *stream) {
+    int i = 0, ch;
+
+    while (True) {
+        ch = getc(stream);
+        if (ch == EOF) {
+            if (i == 0)
+                return NULL;
+            break;
+        }
+        if (ch == '\r') {
+            ch = getc(stream);
+            if (ch != '\n')
+                (void) ungetc(ch, stream);
+            break;
+        }
+        if (ch == '\n') {
+            ch = getc(stream);
+            if (ch != '\r')
+                (void) ungetc(ch, stream);
+            break;
+        }
+        if (i < (n - 1))
+            s[i++] = ch;
+    }
+    s[i] = 0;
+    return s;
+}
+
 
 using namespace std;
 
@@ -150,7 +180,7 @@ prim setMsg() {
 // Stack: db key value --
 //
 prim MBED_addRecord() {
-//    Sl(3);
+    //    Sl(3);
     char *value =(char *)S0;
     char *key = (char *)S1;
     Small *db = (Small *)S2;
@@ -158,7 +188,7 @@ prim MBED_addRecord() {
     db->Set(key, value);
     Pop2;
     Pop;
-//    So(0);
+    //    So(0);
 }
 //
 // Stack: db key --
@@ -274,20 +304,20 @@ void initFs() {
 prim P_fopen()	{
     stackitem stat;
 
-//    Sl(3);
-//    Hpc(S2);
-//    Hpc(S0);
+    //    Sl(3);
+    //    Hpc(S2);
+    //    Hpc(S0);
 
-//    Isfile(S0);
+    //    Isfile(S0);
 
     /*
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
-    if(!fd) {
-        atlastTxString((char *)" failed to fopen file.\r\n");
-    } else {
-        fclose(fd);
-    }
-    */
+     *    FILE *fd=fopen("/fs/numbers.txt", "r+");
+     *    if(!fd) {
+     *        atlastTxString((char *)" failed to fopen file.\r\n");
+} else {
+    fclose(fd);
+}
+*/
 
     char * fname = (char *) S2;
     char *mode =(char *)S1;
@@ -310,21 +340,21 @@ prim P_fopen()	{
 prim P_fread() {
     /* Was ------- File read: fd len buf -- length */
     /* ATH Now --- File read: buf len fd -- length */
-//    Sl(3);
-//    Hpc(S0);
+    //    Sl(3);
+    //    Hpc(S0);
 
-//     Isfile(S0);
-//    Isopen(S0);
+    //     Isfile(S0);
+    //    Isopen(S0);
     // TODO This is stupid, it is inconsisitent with write.
     // The stack order should follow the C convention.
     // S2 = fread((char *) S0, 1, ((int) S1), FileD(S2));
-//    S2 = fread((char *) S2, 1, ((int) S1), FileD(S0));
+    //    S2 = fread((char *) S2, 1, ((int) S1), FileD(S0));
 
     FILE *fd = FileD(S0);
     int len = (int)S1;
     void *buffer = (void *)S2;
 
-//    size_t ret= fread(buffer, len,1, fd);
+    //    size_t ret= fread(buffer, len,1, fd);
     size_t ret= fread(buffer, 1,len, fd);
 
     Pop2;
@@ -332,13 +362,27 @@ prim P_fread() {
     S0 = (stackitem) ret;
 }
 
+prim P_fgetline() {
+    //    Sl(2);
+    //    Hpc(S0);
+    //    Isfile(S1);
+    //    Isopen(S1);
+
+    if (atl_fgetsp((char *) S0, 132, FileD(S1)) == NULL) {
+        S1 = 0;
+    } else {
+        S1 = -1;
+    }
+    Pop;
+}
+
 /* Close file: fd -- */
 prim P_fclose() {
-//    Sl(1);
-//    Hpc(S0);
+    //    Sl(1);
+    //    Hpc(S0);
 
-//    Isfile(S0);
-//    Isopen(S0);
+    //    Isfile(S0);
+    //    Isopen(S0);
     V fclose(FileD(S0));
 
     *(((stackitem *) S0) + 1) = (stackitem) NULL;
@@ -348,18 +392,18 @@ prim P_fclose() {
 // was : File write: len buf fd -- length
 // Is : write: buff, size, fd -- length
 prim P_fwrite() {
-//    Sl(3);
-//    Hpc(S2);
-//    Isfile(S0);
+    //    Sl(3);
+    //    Hpc(S2);
+    //    Isfile(S0);
 
-//    Isopen(S0);
+    //    Isopen(S0);
 
     FILE *fd = FileD(S0);
     int len = (int)S1;
     void *buffer = (void *)S2;
 
     size_t ret= fwrite(buffer, 1,len, fd);
-//    S2 = fwrite((char *) S1, 1, ((int) S2), FileD(S0));
+    //    S2 = fwrite((char *) S1, 1, ((int) S2), FileD(S0));
     Pop2;
 
     S0 = (stackitem) ret;
@@ -379,4 +423,59 @@ prim P_fseek() {
     (void) fseek(fd,pos,SEEK_SET);
     Pop2;
 }
+
+prim FS_remove() {
+    char *fpath = (char *) S0;
+
+    int err = fileSystem->remove(fpath);
+
+    S0 = (err < 0) ? -1 : 0;
+
+}
+
+prim FS_cat() {
+    char buffer[255];
+    char *fname = (char *) S0;
+
+    FILE *fd = fopen(fname,(char *)"r");
+    size_t ret=-1;
+
+    if(!fd) {
+        S0=(stackitem)-1;
+    } else {
+        stdio_mutex.lock();
+        do {
+            ret= fread(buffer, 1,sizeof(buffer), fd);
+            atlastTxString((char *)buffer);
+            memset(buffer,0,sizeof(buffer));
+        } while(ret > 0);
+        stdio_mutex.lock();
+    }
+
+}
+
+prim FS_ls() {
+    int err;
+
+
+    DIR *d = opendir("/fs/");
+    if (!d) {
+        error("error: %s (%d)\r\n", strerror(errno), -errno);
+    }
+
+    while (true) {
+        struct dirent*  e = readdir(d);
+        if (!e) {
+            break;
+        }
+
+        stdio_mutex.lock();
+        printf("    %s\r\n", e->d_name);
+        stdio_mutex.lock();
+    }
+    err = closedir(d);
+
+}
+
+
 

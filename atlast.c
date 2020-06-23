@@ -3490,8 +3490,8 @@ prim P_fdelete()		      /* Delete file: fname -- flag */
     S0 = (yaffs_unlink((char *) S0) == 0) ? Truth : Falsity;
 #endif
 }
-
-prim P_fgetline()		      /* Get line: fd string -- flag */
+/*
+prim P_fgetline()		      // Get line: fd string -- flag
 {
     Sl(2);
     Hpc(S0);
@@ -3504,6 +3504,7 @@ prim P_fgetline()		      /* Get line: fd string -- flag */
     }
     Pop;
 }
+*/
 
 prim P_fputline()		      /* Put line: string fd -- flag */
 {
@@ -5074,7 +5075,7 @@ static struct primfcn primt[] = {
     {"0ACCESS", P_access},
 //    {"0FCLOSE", P_fclose},
     {"0UNLINK", P_fdelete},
-    {"0FGETS", P_fgetline},
+//    {"0FGETS", P_fgetline},
     {"0FPUTS", P_fputline},
 //    {"0FREAD", P_fread},
 //    {"0FWRITE", P_fwrite},

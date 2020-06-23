@@ -2,5 +2,5 @@
 
 set -x 
 
-openocd -f /usr/share/openocd/scripts/board/st_nucleo_f4.cfg
-
+# openocd -f /usr/share/openocd/scripts/board/st_nucleo_f4.cfg
+openocd -f ./st_nucleo_f4.cfg
