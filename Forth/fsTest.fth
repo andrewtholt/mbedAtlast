@@ -9,7 +9,9 @@ file tst
 
     "/fs/numbers.txt" "r+" tst fopen if
 
-        buffer 10 tst fread
+\        buffer 10 tst fread
+
+        tst buffer fgetline
         cr "Length :" type  . cr
 
         buffer 255 dump

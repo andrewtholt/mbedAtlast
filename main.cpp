@@ -46,13 +46,11 @@ MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
-/*
-SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
-LittleFileSystem fileSystem("fs");
-*/
-
 void initFs() {
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
+    //
+    // mosi, miso, sck, cs
+    //
     blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
     fileSystem = new LittleFileSystem("fs");
 
@@ -90,7 +88,7 @@ void ledControlTask(void) {
     bool runFlag = true;
 
 
-    DigitalOut myLed(LED1);
+    DigitalOut myLed(LED2);
 
     mbedSmall *db = new mbedSmall();
     parseMsg *p = new parseMsg( db );
@@ -220,7 +218,9 @@ void  atlast(Small *db) {
     } while(len >= 0);
 
     extern void cpp_extrasLoad();
+    extern void io_extrasLoad();
     cpp_extrasLoad();
+    io_extrasLoad();
 
     /*
      *    var = atl_vardef((char *)"DBASE",sizeof(Small *));
@@ -246,7 +246,7 @@ void  atlast(Small *db) {
 
         stdio_mutex.lock();
     ATH_banner();
-    initFs();
+//    initFs();
         stdio_mutex.unlock();
 
     while(runFlag) {
@@ -296,31 +296,6 @@ int main() {
 //    extern void initFs();
     pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
-
-    /*
-    atlastTxString((char *)"\r\nSetup filesystem\r\n");
-    atlastTxString((char *)"Mounting the filesystem... \r\n");
-
-    int err = fileSystem.mount(&blockDevice);
-
-    if(err) {
-        atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
-        err = fileSystem.reformat(&blockDevice);
-
-        if(err) {
-            error("error: %s (%d)\r\n", strerror(-err), err);
-        } else {
-            atlastTxString((char *)"... done.\r\n");
-        }
-    } else {
-        atlastTxString((char *)"... done.\r\n");
-    }
-
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
-    if(!fd) {
-        atlastTxString((char *)" failed to open file.\r\n");
-    }
-    */
 
     initFs();
 

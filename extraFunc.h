@@ -34,13 +34,6 @@ void MBED_dbToMsg();
 void MBED_msgDump();
 void getI2CId() ;
 void subscribers();
-void P_fopen();
-void P_fread();
-void P_fwrite();
-void P_fflush();
-void P_fseek();
-
-void P_fclose();
 
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
@@ -77,13 +70,6 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0DB-TO-MSG",  MBED_dbToMsg},
     {(char *)"0MSG-DUMP",  MBED_msgDump},
 
-    {(char *)"0FOPEN", P_fopen},
-    {(char *)"0FREAD", P_fread},
-    {(char *)"0FWRITE", P_fwrite},
-    {(char *)"0FSEEK", P_fseek},
-    {(char *)"0FFLUSH", P_fflush},
-
-    {(char *)"0FCLOSE", P_fclose},
 //    {NULL, (codeptr) 0}
     {nullptr, (codeptr) 0}
 };

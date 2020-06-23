@@ -1,12 +1,12 @@
 /*
 
-			      A T L A S T
+                            A T L A S T
 
-	 Autodesk Threaded Language Application System Toolkit
+        Autodesk Threaded Language Application System Toolkit
 
-		 Definitions for components of ATLAST
+                Definitions for components of ATLAST
 
-     Designed and implemented in January of 1990 by John Walker.
+    Designed and implemented in January of 1990 by John Walker.
 
 
     This  file	contains the definitions for modules within the ATLAST
@@ -14,16 +14,18 @@
     ATLAST   are   in	ATLAST.H,  which  is  included	by  this  file
     automatically.
 
-		This program is in the public domain.
+                This program is in the public domain.
 
 */
 
 #ifndef __ATLDEF
 #define __ATLDEF
 
+/*
 #ifndef V
 #define V (void )
 #endif
+*/
 
 #include <stdint.h>
 #include "atlast.h"                   /* Define user linkage structures */
@@ -35,8 +37,8 @@ typedef void (*codeptr)();	      /* Machine code pointer */
 typedef struct dw {
     struct dw *wnext;		      /* Next word in dictionary */
     char *wname;		      /* Word name.  The first character is
-					 actually the word flags, including
-					 the (IMMEDIATE) bit. */
+                                        actually the word flags, including
+                                        the (IMMEDIATE) bit. */
     codeptr wcode;		      /* Machine code implementation */
 } dictword;
 
@@ -128,7 +130,7 @@ extern atl_real rbuf0, rbuf1, rbuf2;  /* Real temporaries for alignment */
 #define FmodeCre    8		      /* Create new file */
 
 extern stackitem *stack, *stk, *stackbot, *stacktop, *heap, *hptr,
-		 *heapbot, *heaptop;
+                *heapbot, *heaptop;
 extern dictword ***rstack, ***rstk, ***rstackbot, ***rstacktop;
 extern dictword *dict, *dictprot, *curword, *createword;
 extern dictword **ip;
@@ -141,12 +143,13 @@ extern int cstrbuf;
 #endif /* NOMANGLE */
 extern void P_create(), P_dodoes();
 #else  /* EXPORT */
-#define Exported static
+// #define Exported static
 #endif /* EXPORT */
 
 #ifndef NOMEMCHECK
 #ifdef EXPORT
 #ifndef NOMANGLE
+#warning "Here"
 #define stakover    atl__Eso
 #define rstakover   atl__Erso
 #define heapover    atl__Eho
@@ -157,7 +160,7 @@ extern void P_create(), P_dodoes();
 extern
 #endif
 void stakover(), rstakover(), heapover(), badpointer(),
-     stakunder(), rstakunder();
+    stakunder(), rstakunder();
 #endif
 
 /* Functions called by exported extensions. */
@@ -303,7 +306,7 @@ extern char *atl_fgetsp();
 /*  File I/O definitions (used only if FILEIO is configured).  */
 
 #define FileSent    0x831FDF9DL       /* Courtesy Marinchip Radioactive
-					 random number generator */
+                                        random number generator */
 #define Isfile(x) Hpc(x); if (*((stackitem *)(x))!=FileSent) {V printf("\nNot a file\n");return;}
 #define FileD(x)  ((FILE *) *(((stackitem *) (x)) + 1))
 #define Isopen(x) if (FileD(x) == NULL) {V printf("\nFile not open\n");return;}
