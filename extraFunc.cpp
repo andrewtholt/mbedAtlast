@@ -238,7 +238,7 @@ prim subscribers() {
 void cpp_extrasLoad() {
     atl_primdef( cpp_extras );
 }
-
+/*
 void initFs() {
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
     blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
@@ -269,6 +269,7 @@ void initFs() {
         fclose(fd);
     }
 }
+*/
 
 /* Open file: fname fmodes fd -- flag */
 prim P_fopen()	{

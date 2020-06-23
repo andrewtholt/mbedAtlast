@@ -51,6 +51,37 @@ SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
 LittleFileSystem fileSystem("fs");
 */
 
+void initFs() {
+    atlastTxString((char *)"\r\nSetup filesystem\r\n");
+    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
+    fileSystem = new LittleFileSystem("fs");
+
+    atlastTxString((char *)"Mounting the filesystem... \r\n");
+
+    int err = fileSystem->mount(blockDevice);
+
+    if(err) {
+        atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
+        err = fileSystem->reformat(blockDevice);
+
+        if(err) {
+            error("error: %s (%d)\r\n", strerror(-err), err);
+        } else {
+            atlastTxString((char *)"... done.\r\n");
+        }
+    } else {
+        atlastTxString((char *)"... done.\r\n");
+    }
+
+    FILE *fd=fopen("/fs/numbers.txt", "r+");
+    if(!fd) {
+        atlastTxString((char *)" failed to open file.\r\n");
+    } else {
+        atlastTxString((char *)"closing file.\r\n");
+        fclose(fd);
+    }
+}
+
 void ledControlTask(void) {
 
     int count=-1;
@@ -262,7 +293,7 @@ void atlastRx(Small *db) {
 }
 
 int main() {
-    extern void initFs();
+//    extern void initFs();
     pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
 
@@ -291,7 +322,7 @@ int main() {
     }
     */
 
-//    initFs();
+    initFs();
 
     osStatus status ;
     Small *atlastDb = new Small();
