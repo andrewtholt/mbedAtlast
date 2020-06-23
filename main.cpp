@@ -88,7 +88,7 @@ void ledControlTask(void) {
     bool runFlag = true;
 
 
-    DigitalOut myLed(LED2);
+    DigitalOut myLed(PA_13);
 
     mbedSmall *db = new mbedSmall();
     parseMsg *p = new parseMsg( db );
