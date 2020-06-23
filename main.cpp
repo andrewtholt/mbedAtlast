@@ -1,8 +1,4 @@
 #include "mbed.h"
-/*
-#include "SDBlockDevice.h"
-#include "LittleFileSystem.h"
-*/
 
 #include <errno.h>
 
@@ -36,6 +32,12 @@ extern "C" {
 
     char outBuffer[OUTBUFFER];
 }
+
+#include "SDBlockDevice.h"
+SDBlockDevice *blockDevice;
+
+#include "LittleFileSystem.h"
+LittleFileSystem *fileSystem;
 
 extern void initFs();
 
@@ -329,6 +331,7 @@ int main() {
 
     Thread atlastThread;
     status = atlastThread.start(callback(atlast,atlastDb));
+
     stdio_mutex.lock();
     if (status == osOK) {
         atlastTxString((char *)"atlastRxThread started\r\n");

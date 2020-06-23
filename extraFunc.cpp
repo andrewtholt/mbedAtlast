@@ -7,8 +7,12 @@
 #include <stdio.h>
 #include <errno.h>
 
+/*
 SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
 LittleFileSystem fileSystem("fs");
+*/
+extern SDBlockDevice *blockDevice;
+extern LittleFileSystem *fileSystem;
 
 // #include "Small.h"
 #include "mbedSmall.h"
@@ -237,13 +241,16 @@ void cpp_extrasLoad() {
 
 void initFs() {
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
+    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
+    fileSystem = new LittleFileSystem("fs");
+
     atlastTxString((char *)"Mounting the filesystem... \r\n");
 
-    int err = fileSystem.mount(&blockDevice);
+    int err = fileSystem->mount(blockDevice);
 
     if(err) {
         atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
-        err = fileSystem.reformat(&blockDevice);
+        err = fileSystem->reformat(blockDevice);
 
         if(err) {
             error("error: %s (%d)\r\n", strerror(-err), err);
