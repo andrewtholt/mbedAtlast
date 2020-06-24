@@ -2,4 +2,6 @@
 
 set -x
 
-gdb-multiarch -x dbg.gdb  ./BUILD/NUCLEO_F411RE/GCC_ARM/mbed.elf
+TARGET=./BUILD/ARCH_MAX/GCC_ARM/mbed.elf
+
+gdb-multiarch -x dbg.gdb  $TARGET

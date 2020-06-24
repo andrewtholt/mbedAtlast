@@ -90,7 +90,8 @@ void ledControlTask(void) {
     bool runFlag = true;
 
 
-    DigitalOut myLed(LED1);
+//    DigitalOut myLed(LED1);
+    DigitalOut myLed(PD_14);
 
     mbedSmall *db = new mbedSmall();
     parseMsg *p = new parseMsg( db );
@@ -246,7 +247,7 @@ void  atlast(Small *db) {
 
         stdio_mutex.lock();
     ATH_banner();
-    initFs();
+//    initFs();
         stdio_mutex.unlock();
 
     while(runFlag) {
@@ -294,8 +295,11 @@ void atlastRx(Small *db) {
 
 int main() {
 //    extern void initFs();
-    pc = new Serial(USBTX, USBRX);
+    pc = new Serial(PA_2, PA_3);
+
+//    pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
+    atlastTxString((char *)"\r\nHello\r\n");
 
     /*
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
@@ -322,7 +326,7 @@ int main() {
     }
     */
 
-    initFs();
+//    initFs();
 
     osStatus status ;
     Small *atlastDb = new Small();

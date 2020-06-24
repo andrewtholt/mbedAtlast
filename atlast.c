@@ -14,16 +14,6 @@
 #include <errno.h>
 #include "io.h"
 
-#ifdef FREERTOS
-#include "tim.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "NANDFlash.h"
-#include "stm32f4xx_hal_qspi.h"
-#include "yaffs_utils.h"
-#include "usb_printf.h"
-#endif
-
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -32,47 +22,6 @@
 #include "atlcfig.h"
 #include "atlast.h"
 
-// #include "atldef.h"
-
-#ifdef ATH
-//
-// Socket includes
-//
-#ifdef SOCKETS
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <netdb.h>
-
-#endif
-#endif
-
-// #define MEMSTAT
-
-/*
-#ifdef ALIGNMENT
-#ifdef __TURBOC__
-#include <mem.h>
-#else
-#include <memory.h>
-#endif
-#endif
-*/
-
-#ifdef EMBEDDED
-#ifdef FREERTOS
-#include "usart.h"
-#include "ATH_serial.h"
-#include "tasks.h"
-#include "cmsis_os.h"
-#include "elco.h"
-
-// extern osPoolId mpool_id;
-
-// extern UART_HandleTypeDef *console;
-#endif
-extern char outBuffer[];
-#endif
 
 static int token( char **);
 
@@ -227,30 +176,6 @@ dictword ***rstackmax;       /* Return stack maximum excursion */
 stackitem *heapmax;	      /* Heap maximum excursion */
 #endif
 
-
-#ifdef FILEIO
-
-static char *fopenmodes[] = {
-#ifdef FBmode
-#define FMspecial
-    /* Fopen() mode table for systems that require a "b" in the
-       mode string for binary files. */
-    "", "r",  "",   "r+",
-    "", "rb", "",   "r+b",
-    "", "",   "w",  "w+",
-    "", "",   "wb", "w+b"
-#endif
-#ifndef FMspecial
-        /* Default fopen() mode table for SVID-compatible systems not
-           overridden by a special table above. */
-        "", "r",  "",   "r+",
-    "", "r",  "",   "r+",
-    "", "",   "w",  "w+",
-    "", "",   "w",  "w+"
-#endif
-};
-
-#endif /* FILEIO */
 
 static char tokbuf[128];	      /* Token buffer */
 static char *instream = NULL;	      /* Current input stream line */
@@ -3317,7 +3242,7 @@ prim P_dotparen() {
         /* print string literal in in-line code. */
         sprintf(buffer,"%s", ((char *) ip) + 1);
 #ifdef MBED
-        atlastTxString(outBuffer);
+        atlastTxString(buffer);
 #endif
         Skipstring;		      /* And advance IP past it */
     }
@@ -3382,7 +3307,7 @@ prim ATH_sift() {
 
 /* List words */
 prim P_words() {
-//	char outBuffer[132];
+    char outBuffer[132];
 // extern char outBuffer[];
 #ifndef Keyhit
     int key = 0;
