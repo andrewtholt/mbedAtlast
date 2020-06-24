@@ -5,10 +5,12 @@ blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
 
 On Nucleo-F411RE
 
-PA_7	mosi
-PA_6	miso
-PA_5	sck
-PA_8	cs
+| Signal | Pin |
+|----|----|
+|mosi |PA_7|	
+|miso| PA_6|
+|sck |PA_5|
+|cs |PA_8|
 
 on STM32f4-discovery
 
