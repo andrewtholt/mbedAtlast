@@ -39,8 +39,6 @@ SDBlockDevice *blockDevice;
 #include "LittleFileSystem.h"
 LittleFileSystem *fileSystem;
 
-extern void initFs();
-
 Queue<message_t, 8> tasks[(int)taskId::LAST];
 MemoryPool<message_t, 8> mpool;
 Serial *pc ;
@@ -53,7 +51,9 @@ LittleFileSystem fileSystem("fs");
 
 void initFs() {
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
-    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
+
+//    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
+    blockDevice = new SDBlockDevice (SPI_MOSI,  SPI_MISO, SPI_SCK,SPI_CS);
     fileSystem = new LittleFileSystem("fs");
 
     atlastTxString((char *)"Mounting the filesystem... \r\n");
@@ -295,11 +295,14 @@ void atlastRx(Small *db) {
 
 int main() {
 //    extern void initFs();
-    pc = new Serial(PA_2, PA_3);
+//    pc = new Serial(PA_2, PA_3);
+    pc = new Serial(SERIAL_TX, SERIAL_RX);
 
 //    pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
-    atlastTxString((char *)"\r\nHello\r\n");
+//    atlastTxString((char *)"\r\nHello\r\n");
+
+    pc->printf("\r\nTest\r\n");
 
     /*
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
