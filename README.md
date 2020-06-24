@@ -13,10 +13,11 @@ On Nucleo-F411RE
 |cs |PA_8|
 
 on STM32f4-discovery
-
-    SD_MOSI     = PC_3,    
-    SD_MISO     = PC_2,    
-    SD_SCK      = PB_10,    
-    SD_CS       = PE_2,
+| Signal | Pin |
+|----|----|
+|SD_MOSI|PC_3|   
+|SD_MISO|PC_2|    
+|SD_SCK|PB_10|    
+|SD_CS|PE_2|
     
     
