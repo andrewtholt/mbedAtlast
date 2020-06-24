@@ -1,7 +1,9 @@
 # mbedAtlast
 
+```C++
 // mosi, miso, sck, cs
 blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
+```
 
 On Nucleo-F411RE
 
