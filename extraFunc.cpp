@@ -34,10 +34,16 @@ extern "C" {
     #include "extraFunc.h"
     #include "atldef.h"
 }
+extern bool remoteCommand;
 
 using namespace std;
 
 prim crap() {
+}
+
+prim P_setRemoteCommand() {
+    remoteCommand = (bool)S0;
+    Pop;
 }
 //
 // stack: <task-id> <msg> --

@@ -11,24 +11,24 @@
 
 #define ECHO
 extern "C" {
-    #include <stdio.h>
-    #include <string.h>
-    #include <stdint.h>
-    #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-    #include "atlast.h"
-    #include "atlcfig.h"
-    #include "atldef.h"
+#include "atlast.h"
+#include "atlcfig.h"
+#include "atldef.h"
 
-    #include "extraFunc.h"
-    #include "parseMsg.h"
-    #include "io.h"
-    #ifdef NVRAMRC
-    #include "nvramrc.h"
-    #else
+#include "extraFunc.h"
+#include "parseMsg.h"
+#include "io.h"
+#ifdef NVRAMRC
+#include "nvramrc.h"
+#else
     uint8_t nvramrc[] = ": tst \n10 0 do \ni . cr \nloop \n; \n \n";
     // uint8_t nvramrc[] = ": sifting\ntoken $sift\n;\n: [char] char ;";
-    #endif
+#endif
 
     char outBuffer[OUTBUFFER];
 }
@@ -44,15 +44,19 @@ MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
+bool remoteCommand = true;
+bool remoteProtocol() ;
 /*
-SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
-LittleFileSystem fileSystem("fs");
-*/
+ * SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
+ * LittleFileSystem fileSystem("fs");
+ */
 
 void initFs() {
+
+    bool fail=true;
     atlastTxString((char *)"\r\nSetup filesystem\r\n");
 
-//    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
+    //    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
     blockDevice = new SDBlockDevice (SPI_MOSI,  SPI_MISO, SPI_SCK,SPI_CS);
     fileSystem = new LittleFileSystem("fs");
 
@@ -65,20 +69,25 @@ void initFs() {
         err = fileSystem->reformat(blockDevice);
 
         if(err) {
-            error("error: %s (%d)\r\n", strerror(-err), err);
+            atlastTxString((char *)"... format failed.\r\n");
+            bool fail=true;
         } else {
             atlastTxString((char *)"... done.\r\n");
+            bool fail=false;
         }
     } else {
         atlastTxString((char *)"... done.\r\n");
+        bool fail=false;
     }
 
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
-    if(!fd) {
-        atlastTxString((char *)" failed to open file.\r\n");
-    } else {
-        atlastTxString((char *)"closing file.\r\n");
-        fclose(fd);
+    if(fail == false) {
+        FILE *fd=fopen("/fs/numbers.txt", "r+");
+        if(!fd) {
+            atlastTxString((char *)" failed to open file.\r\n");
+        } else {
+            atlastTxString((char *)"closing file.\r\n");
+            fclose(fd);
+        }
     }
 }
 
@@ -90,7 +99,7 @@ void ledControlTask(void) {
     bool runFlag = true;
 
 
-//    DigitalOut myLed(LED1);
+    //    DigitalOut myLed(LED1);
     DigitalOut myLed(PD_14);
 
     mbedSmall *db = new mbedSmall();
@@ -168,6 +177,37 @@ void ledControlTask(void) {
     }
 }
 
+uint8_t getChar(Serial *port) {
+    do {
+        ThisThread::yield();
+    } while(!port->readable());
+
+    uint8_t c=port->getc();
+
+    return c;
+}
+
+uint8_t getCharEcho(Serial *port) {
+    uint8_t c;
+    port->putc( c=port->getc());
+
+    return c;
+}
+
+int getBuffer(Serial *port, uint8_t *buffer, const uint8_t len) {
+
+    uint8_t c=0;
+    uint8_t cnt=0;
+
+    for(int i=0 ; i< len;i++) {
+        c = getChar(port);
+        buffer[i] = c;
+        cnt++;
+    }
+    return cnt;
+}
+
+
 int getline(Serial *port, uint8_t *b, const uint8_t len) {
 
     bool done=false;
@@ -181,9 +221,9 @@ int getline(Serial *port, uint8_t *b, const uint8_t len) {
         } while(!port->readable());
 
         c=port->getc();
-        #ifdef ECHO
+#ifdef ECHO
         port->putc(c);
-        #endif
+#endif
 
         if(iscntrl(c)) {
             switch(c) {
@@ -223,17 +263,6 @@ void  atlast(Small *db) {
     extern void cpp_extrasLoad();
     cpp_extrasLoad();
 
-    /*
-     *    var = atl_vardef((char *)"DBASE",sizeof(Small *));
-     *
-     *    if(var == NULL) {
-     *        fprintf(stderr,"Vardef failed\n");
-} else {
-    //        *((int *)atl_body(var))=42;
-    *((stackitem *)atl_body(var))=(stackitem)db;
-}
-*/
-
     int iam = (int) taskId::ATLAST;
 
     sprintf((char *)lineBuffer,": IAM %d ;" ,iam);
@@ -245,26 +274,171 @@ void  atlast(Small *db) {
     sprintf((char *)lineBuffer,": MSG-PARSER %llu ;",(long long unsigned int) new parseMsg( db ));
     atl_eval((char *)lineBuffer);
 
+    if(remoteCommand == false) {
         stdio_mutex.lock();
-    ATH_banner();
-//    initFs();
+        ATH_banner();
+        initFs();
         stdio_mutex.unlock();
+    }
 
     while(runFlag) {
         (void)memset(outBuffer,0,sizeof(outBuffer));
         (void)memset((char *)lineBuffer,0,sizeof(lineBuffer));
 
-        sprintf(outBuffer, "\n\r-> ");
-        #ifdef MBED
-        stdio_mutex.lock();
-        atlastTxString(outBuffer);
-        stdio_mutex.unlock();
-        #endif
+        if(remoteCommand == false) {
+            sprintf(outBuffer, "\n\r-> ");
+#ifdef MBED
+            stdio_mutex.lock();
+            atlastTxString(outBuffer);
+            stdio_mutex.unlock();
+#endif
 
-        len = getline(pc, lineBuffer, MAX_LINE) ;
-        atl_eval((char *)lineBuffer);
+            len = getline(pc, lineBuffer, MAX_LINE) ;
+            atlastTxString((char *)"\r\n");
+            atl_eval((char *)lineBuffer);
+        } else {
+            remoteCommand = remoteProtocol();
+        }
     }
     //    return 0;
+}
+
+enum class remoteState {
+    INVALID,
+    START,
+    CMD,
+    DEST_LEN,
+    DEST,
+    LAST
+};
+
+bool remoteProtocol() {
+    bool rc=false;
+    static uint8_t c = 0xff;
+
+    char tmpBuffer[32];
+
+    static remoteState State;
+    State =remoteState::INVALID;
+
+    static highLevelOperation cmd;
+    cmd = highLevelOperation::NOP;
+
+    static uint8_t elementCount=0;
+    static uint8_t destLen =0 ;
+    static uint8_t destName[32];
+
+    DigitalOut Led2(LED2);
+    DigitalOut Led3(LED3);
+    DigitalOut Led6(LED6);
+
+    Led2=1;
+    Led3=1;
+    Led6=1;
+
+    while(rc == false) {
+        /*
+         *        do {
+         *            c = getChar(pc);
+         } while ( c != '*');
+
+         State =remoteState::START;
+         */
+
+        switch (State) {
+            case remoteState::INVALID:
+                c = getCharEcho(pc);
+
+                /*
+                 *                sprintf(tmpBuffer,(char *)"INVALID:0x%02x\r\n",c);
+                 *                atlastTxString(tmpBuffer);
+                 */
+                if ( c == '*') {
+                    State =remoteState::START;
+                    Led2=1;
+                    Led3=0;
+                    Led6=0;
+                } else {
+                    State =remoteState::INVALID;
+                }
+                break;
+            case remoteState::START:
+                c = getCharEcho(pc);
+                elementCount = c;
+
+                if( elementCount >=1 and elementCount <= 4) {
+                    State =remoteState::CMD;
+                    Led2=0;
+                    Led3=1;
+                } else {
+                    State =remoteState::INVALID;
+                }
+                break;
+            case remoteState::CMD:
+                {
+                    uint8_t c1 = getCharEcho(pc);
+                    cmd = (highLevelOperation)c1;
+
+                    Led3=0;
+
+                    switch(elementCount) {
+                        case 3:
+                            Led6=1;
+                            switch(cmd) {
+                                case highLevelOperation::SET:
+                                    Led2=1;
+                                    State = remoteState::DEST_LEN;
+                                    break;
+                                case highLevelOperation::SUB:
+                                    State = remoteState::DEST_LEN;
+                                    break;
+                                case highLevelOperation::UNSUB:
+                                    State = remoteState::DEST_LEN;
+                                    break;
+                                default:
+                                    State =remoteState::INVALID;
+                                    break;
+                            }
+                            break;
+                        default:
+                            State =remoteState::INVALID;
+                            break;
+                    }
+                }
+                break;
+            case remoteState::DEST_LEN:
+                {
+                    uint8_t dLen = getCharEcho(pc);
+
+                    if (dLen > 32 ) {
+                        State =remoteState::INVALID;
+                    } else {
+                        State =remoteState::DEST;
+                        destLen = (uint8_t) dLen;
+                        Led2=1;
+                        Led3=1;
+                        Led6=1;
+                    }
+                }
+                break;
+            case remoteState::DEST:
+            {
+                uint8_t d=0;
+                uint8_t buffer[32];
+                uint8_t i;
+                for(i=0;i< destLen;i++) {
+                    d = getCharEcho(pc);
+                    buffer[i] = d;
+                }
+                memcpy(destName,buffer,i);
+            }
+                break;
+            default:
+                break;
+        }
+    }
+
+    return rc;
 }
 
 void atlastRx(Small *db) {
@@ -278,13 +452,13 @@ void atlastRx(Small *db) {
             message_t *message = (message_t*)evt.value.p;
 
             /*
-            stdio_mutex.lock();
-            atlastTxString((char *)"\n=========");
-            printIam((taskId)iam);
-            msgDump(message);
-            atlastTxString((char *)"=========\n");
-            stdio_mutex.unlock();
-            */
+             *            stdio_mutex.lock();
+             *            atlastTxString((char *)"\n=========");
+             *            printIam((taskId)iam);
+             *            msgDump(message);
+             *            atlastTxString((char *)"=========\n");
+             *            stdio_mutex.unlock();
+             */
 
             bool fail = p->fromMsgToDb(message);
 
@@ -294,42 +468,11 @@ void atlastRx(Small *db) {
 }
 
 int main() {
-//    extern void initFs();
-//    pc = new Serial(PA_2, PA_3);
     pc = new Serial(SERIAL_TX, SERIAL_RX);
 
-//    pc = new Serial(USBTX, USBRX);
     pc->baud(115200);
-//    atlastTxString((char *)"\r\nHello\r\n");
 
-    pc->printf("\r\nTest\r\n");
-
-    /*
-    atlastTxString((char *)"\r\nSetup filesystem\r\n");
-    atlastTxString((char *)"Mounting the filesystem... \r\n");
-
-    int err = fileSystem.mount(&blockDevice);
-
-    if(err) {
-        atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
-        err = fileSystem.reformat(&blockDevice);
-
-        if(err) {
-            error("error: %s (%d)\r\n", strerror(-err), err);
-        } else {
-            atlastTxString((char *)"... done.\r\n");
-        }
-    } else {
-        atlastTxString((char *)"... done.\r\n");
-    }
-
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
-    if(!fd) {
-        atlastTxString((char *)" failed to open file.\r\n");
-    }
-    */
-
-//    initFs();
+    //    initFs();
 
     osStatus status ;
     Small *atlastDb = new Small();
@@ -339,45 +482,55 @@ int main() {
 
     status = i2cThread.start(callback(i2cTask));
 
-    stdio_mutex.lock();
-    if (status == osOK) {
-        atlastTxString((char *)"i2cThread started\r\n");
-    } else {
-        atlastTxString((char *)"i2cThread failed\r\n");
+    if(remoteCommand == false) {
+        stdio_mutex.lock();
+        if (status == osOK) {
+            atlastTxString((char *)"i2cThread started\r\n");
+        } else {
+            atlastTxString((char *)"i2cThread failed\r\n");
+        }
+        stdio_mutex.unlock();
     }
-    stdio_mutex.unlock();
 
     Thread ledThread;
     status = ledThread.start(ledControlTask);
-    stdio_mutex.lock();
-    if (status == osOK) {
-        atlastTxString((char *)"ledThread started\r\n");
-    } else {
-        atlastTxString((char *)"ledThread failed\r\n");
+
+    if(remoteCommand == false) {
+        stdio_mutex.lock();
+        if (status == osOK) {
+            atlastTxString((char *)"ledThread started\r\n");
+        } else {
+            atlastTxString((char *)"ledThread failed\r\n");
+        }
+        stdio_mutex.unlock();
     }
-    stdio_mutex.unlock();
 
     Thread atlastRxThread;
     status = atlastRxThread.start(callback(atlastRx,atlastDb));
-    stdio_mutex.lock();
-    if (status == osOK) {
-        atlastTxString((char *)"atlastRxThread started\r\n");
-    } else {
-        atlastTxString((char *)"atlastRxThread failed\r\n");
+
+    if(remoteCommand == false) {
+        stdio_mutex.lock();
+        if (status == osOK) {
+            atlastTxString((char *)"atlastRxThread started\r\n");
+        } else {
+            atlastTxString((char *)"atlastRxThread failed\r\n");
+        }
+        stdio_mutex.unlock();
     }
-    stdio_mutex.unlock();
 
     Thread atlastThread;
     status = atlastThread.start(callback(atlast,atlastDb));
 
-    stdio_mutex.lock();
-    if (status == osOK) {
-        atlastTxString((char *)"atlastRxThread started\r\n");
-    } else {
-        atlastTxString((char *)"atlastRxThread failed\r\n");
-    }
-    stdio_mutex.unlock();
+    if(remoteCommand == false) {
+        stdio_mutex.lock();
+        if (status == osOK) {
+            atlastTxString((char *)"atlastThread started\r\n");
+        } else {
+            atlastTxString((char *)"atlastThread failed\r\n");
+        }
+        stdio_mutex.unlock();
 
+    }
     atlastRxThread.join();
     atlastThread.join();
     ledThread.join();

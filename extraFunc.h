@@ -2,6 +2,8 @@ extern "C" {
 #include "atldef.h"
 }
 void crap();
+void P_setRemoteCommand() ;
+
 void cpp_extrasLoad();
 void mkMessage();
 void setSender();
@@ -44,6 +46,7 @@ void P_fclose();
 
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
+    {(char *)"0REMOTE-CMD", P_setRemoteCommand},
 
     {(char *)"0HI-LEVEL", getHighLevelType},
     {(char *)"0LO-LEVEL", getLowLevelType},

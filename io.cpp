@@ -16,5 +16,4 @@ extern "C" {
             atlastTxByte( ptr[i]);
         }
     }
-
 };
