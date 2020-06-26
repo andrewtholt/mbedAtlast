@@ -2612,8 +2612,8 @@ prim P_constant()		      /* Declare constant */
 /*  Array primitives  */
 
 #ifdef ARRAY
-prim P_arraysub()		      /* Array subscript calculation */
-{				      /* sub1 sub2 ... subn -- addr */
+prim P_arraysub() /* Array subscript calculation */
+{            /* sub1 sub2 ... subn -- addr */
     int i, offset, esize, nsubs;
     stackitem *array;
     stackitem *isp;
@@ -5059,7 +5059,7 @@ static struct primfcn primt[] = {
 //    {(char *)"0TOKEN", ATH_Token},
     {(char *)"0?LINUX", ATH_qlinux},
     {(char *)"0?FREERTOS", ATH_qfreertos},
-    {(char *)"0MS", ATH_ms},
+//    {(char *)"0MS", ATH_ms},
 
 #endif
     {(char *)"0.FEATURES", ATH_Features},

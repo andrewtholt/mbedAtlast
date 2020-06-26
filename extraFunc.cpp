@@ -503,3 +503,11 @@ prim P_PCF8574Read() {
     Push=io.read();
 
 }
+
+prim P_ms() {
+    int delay = (int)S0;
+
+    ThisThread::sleep_for(delay);
+
+    Pop;
+}

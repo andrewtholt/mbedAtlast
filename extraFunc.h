@@ -55,6 +55,8 @@ void P_i2cClose();
 void P_PCF8574Write() ;
 void P_PCF8574Read() ;
 
+void P_ms();
+
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
     {(char *)"0REMOTE-CMD", P_setRemoteCommand},
@@ -91,6 +93,8 @@ static struct primfcn cpp_extras[] = {
 
     {(char *)"0PCF8574!", P_PCF8574Write},
     {(char *)"0PCF8574@", P_PCF8574Read},
+
+    {(char *)"0MS", P_ms},
     //
     // database operations
     //
