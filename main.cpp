@@ -44,7 +44,7 @@ MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
-bool remoteCommand = true;
+bool remoteCommand = false;
 bool remoteProtocol() ;
 /*
  * SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);

@@ -43,6 +43,17 @@ void P_fflush();
 void P_fseek();
 
 void P_fclose();
+void P_i2cScan();
+void P_i2cOpen();
+void P_i2cLock();
+void P_i2cUnlock();
+
+void P_i2cWrite();
+void P_i2cRead();
+void P_i2cClose();
+
+void P_PCF8574Write() ;
+void P_PCF8574Read() ;
 
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
@@ -66,9 +77,20 @@ static struct primfcn cpp_extras[] = {
 
     {(char *)"0SEND-MSG", sendMsg},
 
-    {(char *)"0MAIN@", getMainId},
-    {(char *)"0LED@", getLEDId},
-    {(char *)"0I2C@", getI2CId},
+    {(char *)"0MAINTID", getMainId},
+    {(char *)"0LED-TID", getLEDId},
+    {(char *)"0I2C-TID", getI2CId},
+
+    {(char *)"0I2C-OPEN", P_i2cOpen},
+    {(char *)"0I2C-LOCK", P_i2cLock},
+    {(char *)"0I2C-UNLOCK", P_i2cUnlock},
+    {(char *)"0I2C-SCAN", P_i2cScan},
+    {(char *)"0I2C-WRITE", P_i2cWrite},
+    {(char *)"0I2C-READ", P_i2cRead},
+    {(char *)"0I2C-CLOSE", P_i2cClose},
+
+    {(char *)"0PCF8574!", P_PCF8574Write},
+    {(char *)"0PCF8574@", P_PCF8574Read},
     //
     // database operations
     //

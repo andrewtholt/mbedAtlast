@@ -3,6 +3,7 @@
 #include "mbed.h"
 #include "io.h"
 #include "PCF8574.h"
+
 extern Queue<message_t, 8> tasks[];
 extern MemoryPool<message_t, 8> mpool;
 extern Mutex stdio_mutex;
@@ -10,13 +11,41 @@ extern Mutex stdio_mutex;
 // I2C i2c(I2C_SDA, I2C_SCL);        // sda, scl
 
 void i2cScan() {
+    int ack;
+    int address;
+    uint8_t data=0;
+
     PCF8574 io(I2C_SDA,I2C_SCL,0x40);
 
+    /*
+    char cmd[2];
+
+    i2c.lock();
+    for(address=1;address<127;address++) {
+        ack = i2c.write(address, "11", 1);
+        if (ack == 0) {
+            sprintf(buffer,"\tFound at %3d -- %3x\r\n", address,address);
+        }
+        ThisThread::sleep_for(200);
+    }
+    i2c.unlock();
+
+    cmd[0]=0;
+    i2c.write(address, cmd,1);
+
+   cmd[0]=0xff;
+    i2c.write(address, cmd,1);
+    */
+
+
+
     while(1) {
-        io.write(0x0);
+//        io.write(0x0);
+        io.write(data++);
         ThisThread::sleep_for(200);
-        io.write(0xF);
-        ThisThread::sleep_for(200);
+
+//        io.write(0xF);
+//        ThisThread::sleep_for(200);
     }
 
     char buffer[16];
@@ -59,7 +88,7 @@ void i2cTask(void) {
     //
     taskId iam = taskId::I2C;
 
-    i2cScan();
+// i2cScan();
 
     while(runFlag) {
         osEvent evt = tasks[(int)iam].get( dly );

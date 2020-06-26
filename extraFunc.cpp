@@ -387,3 +387,119 @@ prim P_fseek() {
     Pop2;
 }
 
+prim P_i2cOpen() {
+    I2C *i2c;
+
+    i2c = new I2C(I2C_SDA, I2C_SCL);        // sda, scl
+
+    Push = (stackitem)i2c;
+}
+
+prim P_i2cClose() {
+    I2C *i2c;
+    i2c = (I2C *)S0;
+    i2c->~I2C();
+    Pop;
+}
+
+
+prim P_i2cLock() {
+    I2C *i2c;
+    i2c = (I2C *)S0;
+    i2c->lock();
+    Pop;
+}
+
+prim P_i2cUnlock() {
+    I2C *i2c;
+    i2c = (I2C *)S0;
+    i2c->unlock();
+    Pop;
+}
+//
+// Stack - ptr len i2c_addr i2c_instance--
+//
+prim P_i2cRead() {
+    I2C *i2c;
+    i2c = (I2C *)S0;
+
+    int i2cAddr = (int)S1;
+    int len = (int)S2;
+    char *ptr=(char *)S3;
+
+    i2c->read(i2cAddr,ptr,len);
+
+    Npop(4);
+}
+//
+// Stack - ptr len i2c_addr i2c_instance--
+//
+prim P_i2cWrite() {
+    I2C *i2c;
+    i2c = (I2C *)S0;
+
+    int i2cAddr = (int)S1;
+    int len = (int)S2;
+    char *ptr=(char *)S3;
+
+    i2c->write(i2cAddr,ptr,len);
+
+    Npop(4);
+}
+
+prim P_i2cScan() {
+    int ack;
+    int address;
+    char buffer[32];
+
+    I2C *i2c;
+    i2c = (I2C *)S0;
+
+//    I2C i2c(I2C_SDA, I2C_SCL);        // sda, scl
+
+    char cmd[2];
+
+    i2c->lock();
+    for(address=1;address<127;address++) {
+        ack = i2c->write(address, "11", 1);
+        if (ack == 0) {
+            sprintf(buffer,"\tFound at %3d -- 0x%02x\r\n", address,address);
+            atlastTxString((char *)buffer);
+        }
+        ThisThread::sleep_for(200);
+    }
+    i2c->unlock();
+
+    /*
+    cmd[0]=0;
+    i2c.write(address, cmd,1);
+
+   cmd[0]=0xff;
+    i2c.write(address, cmd,1);
+    */
+}
+#include "PCF8574.h"
+
+prim P_PCF8574Write() {
+
+    char cmd[2];
+
+    PCF8574 io(I2C_SDA,I2C_SCL,0x40);
+
+    uint8_t data=(uint8_t) S0;
+
+    io.write(data);
+
+    Pop;
+
+}
+
+prim P_PCF8574Read() {
+
+
+    PCF8574 io(I2C_SDA,I2C_SCL,0x40);
+
+
+    Push=io.read();
+
+}
