@@ -52,9 +52,6 @@ void P_i2cWrite();
 void P_i2cRead();
 void P_i2cClose();
 
-void P_PCF8574Write() ;
-void P_PCF8574Read() ;
-
 void P_ms();
 
 static struct primfcn cpp_extras[] = {
@@ -90,9 +87,6 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0I2C-WRITE", P_i2cWrite},
     {(char *)"0I2C-READ", P_i2cRead},
     {(char *)"0I2C-CLOSE", P_i2cClose},
-
-    {(char *)"0PCF8574!", P_PCF8574Write},
-    {(char *)"0PCF8574@", P_PCF8574Read},
 
     {(char *)"0MS", P_ms},
     //

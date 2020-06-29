@@ -44,7 +44,7 @@ MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
-bool remoteCommand = false;
+bool remoteCommand = true;
 bool remoteProtocol() ;
 /*
  * SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
@@ -304,11 +304,16 @@ void  atlast(Small *db) {
 }
 
 enum class remoteState {
-    INVALID,
+    INVALID=0,
     START,
     CMD,
     DEST_LEN,
     DEST,
+    KEY_LEN,
+    KEY,
+    VALUE_LEN,
+    VALUE,
+    END,
     LAST
 };
 
@@ -321,13 +326,21 @@ bool remoteProtocol() {
     static remoteState State;
     State =remoteState::INVALID;
 
-    static highLevelOperation cmd;
+    volatile highLevelOperation cmd;
     cmd = highLevelOperation::NOP;
 
     static uint8_t elementCount=0;
     static uint8_t destLen =0 ;
     static uint8_t destName[32];
 
+    static uint8_t keyLen =0 ;
+    static uint8_t keyName[32];
+
+    static uint8_t valueLen =0 ;
+    static uint8_t value[32];
+
+
+    /*
     DigitalOut Led2(LED2);
     DigitalOut Led3(LED3);
     DigitalOut Led6(LED6);
@@ -335,58 +348,63 @@ bool remoteProtocol() {
     Led2=1;
     Led3=1;
     Led6=1;
+    */
 
-    while(rc == false) {
-        /*
-         *        do {
-         *            c = getChar(pc);
-         } while ( c != '*');
+    I2C *i2c = new I2C(I2C_SDA, I2C_SCL);
 
-         State =remoteState::START;
-         */
+    char i2cCmd[2] ;
+
+    i2cCmd[0] = i2cCmd[1] = 0;
+
+    i2c->write(0x40,i2cCmd,1);
+
+//     while(rc == false) {
+    while(remoteCommand == true) {
 
         switch (State) {
             case remoteState::INVALID:
                 c = getCharEcho(pc);
 
-                /*
-                 *                sprintf(tmpBuffer,(char *)"INVALID:0x%02x\r\n",c);
-                 *                atlastTxString(tmpBuffer);
-                 */
                 if ( c == '*') {
                     State =remoteState::START;
-                    Led2=1;
-                    Led3=0;
-                    Led6=0;
                 } else {
                     State =remoteState::INVALID;
                 }
                 break;
+
             case remoteState::START:
+                i2cCmd[0] = (char)remoteState::START;
+                i2c->write(0x40,i2cCmd,1);
+
                 c = getCharEcho(pc);
                 elementCount = c;
 
                 if( elementCount >=1 and elementCount <= 4) {
                     State =remoteState::CMD;
-                    Led2=0;
-                    Led3=1;
                 } else {
                     State =remoteState::INVALID;
                 }
                 break;
             case remoteState::CMD:
+                i2cCmd[0] = (char)remoteState::CMD;
+                i2c->write(0x40,i2cCmd,1);
                 {
                     uint8_t c1 = getCharEcho(pc);
                     cmd = (highLevelOperation)c1;
 
-                    Led3=0;
-
                     switch(elementCount) {
+                        case 1:
+                            if(cmd == highLevelOperation::EXIT) {
+                                State = remoteState::END;
+                                remoteCommand = false;
+
+                            } else if(cmd == highLevelOperation::NOP) {
+                                State = remoteState::END;
+                            }
+                            break;
                         case 3:
-                            Led6=1;
                             switch(cmd) {
-                                case highLevelOperation::SET:
-                                    Led2=1;
+                                case highLevelOperation::GET:
                                     State = remoteState::DEST_LEN;
                                     break;
                                 case highLevelOperation::SUB:
@@ -400,6 +418,13 @@ bool remoteProtocol() {
                                     break;
                             }
                             break;
+                        case 4:
+                            if(cmd == highLevelOperation::SET) {
+                                    State = remoteState::DEST_LEN;
+                            } else {
+                                    State =remoteState::INVALID;
+                            }
+                            break;
                         default:
                             State =remoteState::INVALID;
                             break;
@@ -407,6 +432,8 @@ bool remoteProtocol() {
                 }
                 break;
             case remoteState::DEST_LEN:
+                i2cCmd[0] = (char)remoteState::DEST_LEN;
+                i2c->write(0x40,i2cCmd,1);
                 {
                     uint8_t dLen = getCharEcho(pc);
 
@@ -415,23 +442,76 @@ bool remoteProtocol() {
                     } else {
                         State =remoteState::DEST;
                         destLen = (uint8_t) dLen;
-                        Led2=1;
-                        Led3=1;
-                        Led6=1;
                     }
                 }
                 break;
             case remoteState::DEST:
-            {
-                uint8_t d=0;
-                uint8_t buffer[32];
-                uint8_t i;
-                for(i=0;i< destLen;i++) {
-                    d = getCharEcho(pc);
-                    buffer[i] = d;
+                i2cCmd[0] = (char)remoteState::DEST;
+                i2c->write(0x40,i2cCmd,1);
+                {
+                    uint8_t d=0;
+                    uint8_t buffer[32];
+                    uint8_t i;
+                    for(i=0;i< destLen;i++) {
+                        d = getCharEcho(pc);
+                        buffer[i] = d;
+                    }
+                    memcpy(destName,buffer,i);
+                    State=remoteState::KEY_LEN;
                 }
-                memcpy(destName,buffer,i);
-            }
+                break;
+            case remoteState::KEY_LEN:
+                i2cCmd[0] = (char)remoteState::KEY_LEN;
+                i2c->write(0x40,i2cCmd,1);
+                {
+                    uint8_t kLen = getCharEcho(pc);
+                    keyLen = kLen;
+                }
+                State=remoteState::KEY;
+                break;
+            case remoteState::KEY:
+                i2cCmd[0] = (char)remoteState::KEY;
+                i2c->write(0x40,i2cCmd,1);
+                {
+                    uint8_t buffer[32];
+                    uint8_t i;
+                    for(i=0;i< keyLen;i++) {
+                        uint8_t d;
+                        d = getCharEcho(pc);
+                        buffer[i] = d;
+                    }
+                    memcpy(keyName,buffer,i);
+                }
+                State=remoteState::VALUE_LEN;
+                break;
+            case remoteState::VALUE_LEN:
+                i2cCmd[0] = (char)remoteState::VALUE_LEN;
+                i2c->write(0x40,i2cCmd,1);
+                {
+                    uint8_t vLen = getCharEcho(pc);
+                    valueLen = vLen;
+                }
+                State=remoteState::VALUE;
+                break;
+            case remoteState::VALUE :
+                i2cCmd[0] = (char)remoteState::VALUE;
+                i2c->write(0x40,i2cCmd,1);
+                {
+                    uint8_t buffer[32];
+                    uint8_t i;
+                    for(i=0;i< valueLen;i++) {
+                        uint8_t d;
+                        d = getCharEcho(pc);
+                        buffer[i] = d;
+                    }
+                    memcpy(value,buffer,i);
+                }
+                State=remoteState::END;
+                break;
+            case remoteState::END:
+                i2cCmd[0] = (char)0xff;
+                i2c->write(0x40,i2cCmd,1);
+                State=remoteState::INVALID;
                 break;
             default:
                 break;

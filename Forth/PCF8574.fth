@@ -43,16 +43,17 @@ variable init-ran
     loop
 ;
 
-8 string bar-value
+9 string bar-value
 
-0x01 bar-value c!
-0x03 bar-value 1+ c!
-0x07 bar-value 2+ c!
-0x0f bar-value 3 + c!
-0x1f bar-value 4 + c!
-0x3f bar-value 5 + c!
-0x7f bar-value 6 + c!
-0xff bar-value 7 + c!
+0x00 bar-value c!
+0x01 bar-value 1+ c!
+0x03 bar-value 2+ c!
+0x07 bar-value 3 + c!
+0x0f bar-value 4 + c!
+0x1f bar-value 5 + c!
+0x3f bar-value 6 + c!
+0x7f bar-value 7 + c!
+0xff bar-value 8 + c!
 
 : bar \ value -- bar
     bar-value + c@
@@ -65,7 +66,7 @@ variable init-ran
 : bar-test
     i2c-init 
 
-    8 0 do 
+    9 0 do 
         i . cr
         i bar-set
 

@@ -16,7 +16,8 @@ enum class highLevelOperation {
     GET,
     SET,
     SUB,
-    UNSUB
+    UNSUB,
+    EXIT
 } ;
 
 typedef struct {
@@ -42,8 +43,8 @@ typedef struct {
     taskId Sender;
     msgType type;
     union {
-        highLevelOperation hl_op; 
-        lowLevelOperation ll_op; 
+        highLevelOperation hl_op;
+        lowLevelOperation ll_op;
     } op ;
 
     union {

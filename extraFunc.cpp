@@ -455,10 +455,6 @@ prim P_i2cScan() {
     I2C *i2c;
     i2c = (I2C *)S0;
 
-//    I2C i2c(I2C_SDA, I2C_SCL);        // sda, scl
-
-    char cmd[2];
-
     i2c->lock();
     for(address=1;address<127;address++) {
         ack = i2c->write(address, "11", 1);
@@ -477,31 +473,6 @@ prim P_i2cScan() {
    cmd[0]=0xff;
     i2c.write(address, cmd,1);
     */
-}
-#include "PCF8574.h"
-
-prim P_PCF8574Write() {
-
-    char cmd[2];
-
-    PCF8574 io(I2C_SDA,I2C_SCL,0x40);
-
-    uint8_t data=(uint8_t) S0;
-
-    io.write(data);
-
-    Pop;
-
-}
-
-prim P_PCF8574Read() {
-
-
-    PCF8574 io(I2C_SDA,I2C_SCL,0x40);
-
-
-    Push=io.read();
-
 }
 
 prim P_ms() {
