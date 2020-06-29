@@ -14,9 +14,6 @@ class parseMsg {
         bool fromMsgToDb(message_t *msg);
         bool fromDbToMsg(message_t *msg,taskId sender, char *key);
 
-        bool mkSubMsg(message_t *msg, taskId sender, char *key) ;
-        void mkGetMsg(message_t *msg, taskId sender, char *key) ;
-
         taskId getSender(message_t *msg) ;
         char *getKey(message_t *msg) ;
 

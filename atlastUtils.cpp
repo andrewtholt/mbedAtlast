@@ -6,6 +6,18 @@
 
 extern Mutex stdio_mutex;
 
+std::map <std::string, taskId> nameMap = {
+    {"ATLAST",taskId::ATLAST },
+    {"LED_CTL",taskId::LED_CTL },
+    {"CTRL",taskId::CTRL },
+    {"I2C",taskId::I2C }
+};
+
+taskId nameToId(char *name) {
+
+    return nameMap[name];
+}
+
 void printIam(taskId iam) {
 
 //    osThreadId_t me = ThisThread::get_id();
@@ -18,7 +30,7 @@ void printIam(taskId iam) {
         case taskId::ATLAST:
             atlastTxString((char *)"ATLAST\r\n");
             break;
-        case taskId::LED_CTRL:
+        case taskId::LED_CTL:
             atlastTxString((char *)"LED_CTRL\r\n");
             break;
         case taskId::CTRL:
@@ -46,8 +58,8 @@ void msgDump(message_t *msg) {
         case taskId::ATLAST:
             atlastTxString((char *)"ATLAST\r\n");
             break;
-        case taskId::LED_CTRL:
-            atlastTxString((char *)"LED_CTRL\r\n");
+        case taskId::LED_CTL:
+            atlastTxString((char *)"LED_CTL\r\n");
             break;
         case taskId::CTRL:
             atlastTxString((char *)"CTRL\r\n");

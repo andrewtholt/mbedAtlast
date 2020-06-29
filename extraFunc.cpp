@@ -91,7 +91,7 @@ prim getMainId() {
 }
 
 prim getLEDId() {
-    Push = (int) taskId::LED_CTRL;
+    Push = (int) taskId::LED_CTL;
 }
 
 prim getI2CId() {
@@ -205,16 +205,14 @@ prim MBED_subscribe() {
 
     memset(msg,0,sizeof(message_t));
 
-    bool fail = parse->mkSubMsg( msg, sender, key);
-    if(fail) {
-        mpool.free(msg);
-    }
+    mkSubMsg( msg, sender, key);
 
-    Npop(3);
-    S0 = (stackitem)fail;
+    Npop(4);
 }
 
 prim MBED_get() {
+
+    extern void mkGetMsg(message_t*, taskId, char*);
     parseMsg *parse = (parseMsg *)S3;
     message_t *msg = (message_t *)S2;
     taskId sender = (taskId)S1;
@@ -222,7 +220,7 @@ prim MBED_get() {
 
     memset(msg,0,sizeof(message_t));
 
-    parse->mkGetMsg( msg, sender, key);
+    mkGetMsg( msg, sender, key);
     msg->op.hl_op = highLevelOperation::GET;
 
     Npop(4);

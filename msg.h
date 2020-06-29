@@ -53,4 +53,8 @@ typedef struct {
     } body;
 } message_t;
 
+void mkSubMsg(message_t *msg, taskId sender, char *key) ;
+void mkGetMsg(message_t *msg, taskId sender, char *key) ;
+void mkSetMsg(message_t *msg, taskId sender, char *key, char *value) ;
+
 

@@ -94,7 +94,7 @@ void initFs() {
 void ledControlTask(void) {
 
     int count=-1;
-    taskId iam = taskId::LED_CTRL;
+    taskId iam = taskId::LED_CTL;
 
     bool runFlag = true;
 
@@ -124,14 +124,15 @@ void ledControlTask(void) {
         if (evt.status == osEventMessage ) {
             message_t *message = (message_t*)evt.value.p;
 
+            /*
             stdio_mutex.lock();
 
             atlastTxString((char *)"\n=========");
             printIam((taskId)iam);
-            msgDump(message);
             atlastTxString((char *)"=========\n");
 
             stdio_mutex.unlock();
+            */
 
             char *k;
             taskId id;
@@ -160,7 +161,6 @@ void ledControlTask(void) {
                 case highLevelOperation::UNSUB :
                     break;
             }
-
             mpool.free(message);
         }
 
@@ -318,27 +318,27 @@ enum class remoteState {
 };
 
 bool remoteProtocol() {
-    bool rc=false;
     static uint8_t c = 0xff;
 
     char tmpBuffer[32];
 
-    static remoteState State;
+    remoteState State;
     State =remoteState::INVALID;
 
-    volatile highLevelOperation cmd;
+    highLevelOperation cmd;
     cmd = highLevelOperation::NOP;
 
-    static uint8_t elementCount=0;
-    static uint8_t destLen =0 ;
-    static uint8_t destName[32];
+    uint8_t elementCount=0;
+    uint8_t destLen =0 ;
+    uint8_t destName[32];
 
-    static uint8_t keyLen =0 ;
-    static uint8_t keyName[32];
+    uint8_t keyLen =0 ;
+    uint8_t keyName[32];
 
-    static uint8_t valueLen =0 ;
-    static uint8_t value[32];
+    uint8_t valueLen =0 ;
+    uint8_t value[32];
 
+    taskId iam = taskId::ATLAST;
 
     /*
     DigitalOut Led2(LED2);
@@ -358,11 +358,13 @@ bool remoteProtocol() {
 
     i2c->write(0x40,i2cCmd,1);
 
-//     while(rc == false) {
-    while(remoteCommand == true) {
+    bool rc=true;
+    while(rc == true) {
 
         switch (State) {
             case remoteState::INVALID:
+                i2cCmd[0] = 0;
+                i2c->write(0x40,i2cCmd,1);
                 c = getCharEcho(pc);
 
                 if ( c == '*') {
@@ -396,7 +398,9 @@ bool remoteProtocol() {
                         case 1:
                             if(cmd == highLevelOperation::EXIT) {
                                 State = remoteState::END;
-                                remoteCommand = false;
+                                i2cCmd[0] = (char)State;
+                                i2c->write(0x40,i2cCmd,1);
+                                rc = false;
 
                             } else if(cmd == highLevelOperation::NOP) {
                                 State = remoteState::END;
@@ -499,6 +503,7 @@ bool remoteProtocol() {
                 {
                     uint8_t buffer[32];
                     uint8_t i;
+                    bzero(value,sizeof(value));
                     for(i=0;i< valueLen;i++) {
                         uint8_t d;
                         d = getCharEcho(pc);
@@ -512,12 +517,29 @@ bool remoteProtocol() {
                 i2cCmd[0] = (char)0xff;
                 i2c->write(0x40,i2cCmd,1);
                 State=remoteState::INVALID;
+
+                //
+                // All the data should now be assemlbled to construct a message.
+                // depending on trhe command.
+                //
+                {
+                    message_t *msg = mpool.calloc();
+
+                    switch(cmd) {
+                        case highLevelOperation::SET:
+                            mkSetMsg(msg, iam, (char*)keyName, (char*)value);
+
+                            taskId destId = nameToId((char *)destName);
+
+                            tasks[(int)destId].put(msg);
+                            break;
+                    }
+                }
                 break;
             default:
                 break;
         }
     }
-
     return rc;
 }
 
