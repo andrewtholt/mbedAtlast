@@ -28,6 +28,7 @@ void opUnsub();
 
 void MBED_addRecord();
 void MBED_lookup();
+void taskQdepth() ;
 
 void MBED_subscribe();
 void MBED_get();
@@ -89,6 +90,7 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0I2C-CLOSE", P_i2cClose},
 
     {(char *)"0MS", P_ms},
+    {(char *)"0QDEPTH", taskQdepth},
     //
     // database operations
     //

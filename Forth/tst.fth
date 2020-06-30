@@ -1,7 +1,7 @@
 
 0 memsafe
 
-
+forget msg
 variable msg
 
 : led-on
@@ -9,7 +9,7 @@ variable msg
     DBASE "LED1" "ON" add-record
     msg-parser msg @ iam "LED1" db-to-msg 0= if
         msg @ msg-dump cr
-        led@ msg @ send-msg
+        led-tid msg @ send-msg
         0 msg !
     then
 ;
@@ -20,7 +20,7 @@ variable msg
     DBASE "LED1" "OFF" add-record
     msg-parser msg @ iam "LED1" db-to-msg 0= if
         msg @ msg-dump cr
-        led@ msg @ send-msg
+        led-tid msg @ send-msg
         0 msg !
     then
 ;
@@ -31,7 +31,7 @@ variable msg
     DBASE "LED1" "OFF" add-record
     msg-parser msg @ iam "LED1" db-to-msg 0= if
         msg @ msg-dump cr
-        i2c@ msg @ send-msg
+        i2c-tid msg @ send-msg
         0 msg !
     then
 

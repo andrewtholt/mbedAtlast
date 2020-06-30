@@ -1,4 +1,5 @@
 #include "mbed.h"
+#include <Queue.h>
 
 #include <errno.h>
 
@@ -125,19 +126,21 @@ void ledControlTask(void) {
             message_t *message = (message_t*)evt.value.p;
 
             /*
-            stdio_mutex.lock();
+               stdio_mutex.lock();
 
-            atlastTxString((char *)"\n=========");
-            printIam((taskId)iam);
-            atlastTxString((char *)"=========\n");
+               atlastTxString((char *)"\n=========");
+               printIam((taskId)iam);
+               atlastTxString((char *)"=========\n");
 
-            stdio_mutex.unlock();
-            */
+               stdio_mutex.unlock();
+               */
 
             char *k;
             taskId id;
 
             switch(message->op.hl_op) {
+                case highLevelOperation::INVALID :
+                    break;
                 case highLevelOperation::NOP :
                     break;
                 case highLevelOperation::GET :
@@ -328,7 +331,7 @@ bool remoteProtocol() {
     highLevelOperation cmd;
     cmd = highLevelOperation::NOP;
 
-    uint8_t elementCount=0;
+    volatile uint8_t elementCount=0;
     uint8_t destLen =0 ;
     uint8_t destName[32];
 
@@ -341,14 +344,14 @@ bool remoteProtocol() {
     taskId iam = taskId::ATLAST;
 
     /*
-    DigitalOut Led2(LED2);
-    DigitalOut Led3(LED3);
-    DigitalOut Led6(LED6);
+       DigitalOut Led2(LED2);
+       DigitalOut Led3(LED3);
+       DigitalOut Led6(LED6);
 
-    Led2=1;
-    Led3=1;
-    Led6=1;
-    */
+       Led2=1;
+       Led3=1;
+       Led6=1;
+       */
 
     I2C *i2c = new I2C(I2C_SDA, I2C_SCL);
 
@@ -392,19 +395,19 @@ bool remoteProtocol() {
                 i2c->write(0x40,i2cCmd,1);
                 {
                     uint8_t c1 = getCharEcho(pc);
+
                     cmd = (highLevelOperation)c1;
 
                     switch(elementCount) {
                         case 1:
                             if(cmd == highLevelOperation::EXIT) {
                                 State = remoteState::END;
-                                i2cCmd[0] = (char)State;
-                                i2c->write(0x40,i2cCmd,1);
                                 rc = false;
-
-                            } else if(cmd == highLevelOperation::NOP) {
-                                State = remoteState::END;
+                            } else {
+                                State = remoteState::INVALID;
                             }
+                            i2cCmd[0] = (char)State;
+                            i2c->write(0x40,i2cCmd,1);
                             break;
                         case 3:
                             switch(cmd) {
@@ -424,9 +427,9 @@ bool remoteProtocol() {
                             break;
                         case 4:
                             if(cmd == highLevelOperation::SET) {
-                                    State = remoteState::DEST_LEN;
+                                State = remoteState::DEST_LEN;
                             } else {
-                                    State =remoteState::INVALID;
+                                State =remoteState::INVALID;
                             }
                             break;
                         default:
@@ -455,7 +458,9 @@ bool remoteProtocol() {
                 {
                     uint8_t d=0;
                     uint8_t buffer[32];
+                    bzero(destName,sizeof(destName));
                     uint8_t i;
+                    bzero(buffer,32);
                     for(i=0;i< destLen;i++) {
                         d = getCharEcho(pc);
                         buffer[i] = d;
@@ -486,7 +491,12 @@ bool remoteProtocol() {
                     }
                     memcpy(keyName,buffer,i);
                 }
-                State=remoteState::VALUE_LEN;
+
+                if(cmd == highLevelOperation::SET) {
+                    State=remoteState::VALUE_LEN;
+                } else {
+                    State=remoteState::END;
+                }
                 break;
             case remoteState::VALUE_LEN:
                 i2cCmd[0] = (char)remoteState::VALUE_LEN;
@@ -518,21 +528,39 @@ bool remoteProtocol() {
                 i2c->write(0x40,i2cCmd,1);
                 State=remoteState::INVALID;
 
+                osStatus mqStatus;
+
                 //
                 // All the data should now be assemlbled to construct a message.
                 // depending on trhe command.
                 //
                 {
+                    bool valid=false;
                     message_t *msg = mpool.calloc();
+                    taskId destId;
 
                     switch(cmd) {
                         case highLevelOperation::SET:
                             mkSetMsg(msg, iam, (char*)keyName, (char*)value);
-
-                            taskId destId = nameToId((char *)destName);
-
-                            tasks[(int)destId].put(msg);
+                            destId = nameToId((char *)destName);
+                            valid=true;
                             break;
+                        case highLevelOperation::GET:
+                            mkGetMsg(msg, iam, (char*)keyName);
+                            destId = nameToId((char *)destName);
+                            valid=true;
+                            break;
+                        default:
+                            valid=false;
+                            break;
+                    }
+                    if(valid) {
+                        mqStatus = tasks[(int)destId].put(msg);
+
+                        if (mqStatus != 0) {
+                            i2cCmd[0] = (char)0x80;
+                            i2c->write(0x40,i2cCmd,1);
+                        }
                     }
                 }
                 break;
@@ -540,6 +568,8 @@ bool remoteProtocol() {
                 break;
         }
     }
+    i2cCmd[0] = (char)0;
+    i2c->write(0x40,i2cCmd,1);
     return rc;
 }
 
@@ -563,6 +593,9 @@ void atlastRx(Small *db) {
              */
 
             bool fail = p->fromMsgToDb(message);
+
+            if(remoteCommand) {
+            }
 
             mpool.free(message);
         }

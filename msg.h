@@ -12,7 +12,8 @@ enum class msgType {
 } ;
 
 enum class highLevelOperation {
-    NOP=0,
+    INVALID=0,
+    NOP,
     GET,
     SET,
     SUB,

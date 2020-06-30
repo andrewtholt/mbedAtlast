@@ -45,6 +45,12 @@ prim P_setRemoteCommand() {
     remoteCommand = (bool)S0;
     Pop;
 }
+
+prim taskQdepth() {
+    taskId tid = (taskId)S0;
+
+    S0 = (stackitem)tasks[(int)tid].count();
+}
 //
 // stack: <task-id> <msg> --
 //

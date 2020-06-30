@@ -3657,8 +3657,13 @@ prim P_evaluate()
 
 /*  Stack mechanics  */
 
-prim P_depth()			      /* Push stack depth */
-{
+int depth() {
+    return (stk - stack);
+}
+
+/* Push stack depth */
+prim P_depth() {
+
     stackitem s = stk - stack;
 
     So(1);
