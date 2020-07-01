@@ -320,6 +320,102 @@ enum class remoteState {
     LAST
 };
 
+void parsePacket(const uint8_t *ptr) {
+    I2C *i2c = new I2C(I2C_SDA, I2C_SCL);
+    char i2cCmd[2] ;
+
+    highLevelOperation cmd=(highLevelOperation)ptr[0];
+
+    taskId iam = taskId::ATLAST;
+    volatile char dest[32];
+    volatile char key[MAX_TOPIC];
+
+    bzero((char *)dest,sizeof(dest));
+    bzero((char *)key,sizeof(key));
+
+    i2cCmd[0] = i2cCmd[1] = 0;
+    i2c->write(0x40,i2cCmd,1);
+
+    bool valid = false;
+    message_t *msg = mpool.calloc();
+    taskId destId;
+
+    switch(cmd) {
+        case highLevelOperation::INVALID:
+            break;
+        case highLevelOperation::NOP:
+            break;
+        case highLevelOperation::GET:
+            {
+                int offset = 1;
+
+                int destLen = (int)ptr[offset++];
+
+                strncpy((char *)dest, (char *)&ptr[offset],destLen);
+
+                offset += destLen;
+
+                int keyLen = (int)ptr[offset++];
+
+                strncpy((char *)key, (char *)&ptr[offset], keyLen);
+
+                destId = nameToId((char *)dest);
+
+                msg = mpool.calloc();
+                mkGetMsg(msg, iam, (char*)key);
+
+                valid=true;
+            }
+            break;
+        case highLevelOperation::SET:
+            {
+                int offset = 1;
+
+                i2cCmd[0] = (uint8_t) offset;
+                i2c->write(0x40,i2cCmd,1);
+            }
+            break;
+        case highLevelOperation::SUB:
+            break;
+        case highLevelOperation::UNSUB:
+            break;
+        case highLevelOperation::EXIT:
+            remoteCommand = false;
+            break;
+    }
+    if(valid) {
+        tasks[(int)destId].put(msg);
+    } else {
+        mpool.free(msg);
+    }
+}
+
+bool remoteProtocol() {
+
+    //
+    // TODO Remove volatile for debugging only
+    //
+    uint8_t packetBuffer[0xff];
+    bzero((void *)packetBuffer,sizeof(packetBuffer));
+
+    bool rc=true;
+    uint8_t c = 0xff;
+
+//    while(rc == true) {
+    while(remoteCommand == true) {
+        do {
+            c = getCharEcho(pc);
+        } while( c !=  '*');
+        uint8_t packetLen = getCharEcho(pc);
+
+        for(int8_t i=0;i< packetLen;i++) {
+            packetBuffer[i] = getCharEcho(pc);
+        }
+        parsePacket(packetBuffer);
+    }
+}
+
+#if 0
 bool remoteProtocol() {
     static uint8_t c = 0xff;
 
@@ -354,11 +450,8 @@ bool remoteProtocol() {
        */
 
     I2C *i2c = new I2C(I2C_SDA, I2C_SCL);
-
     char i2cCmd[2] ;
-
     i2cCmd[0] = i2cCmd[1] = 0;
-
     i2c->write(0x40,i2cCmd,1);
 
     bool rc=true;
@@ -572,6 +665,7 @@ bool remoteProtocol() {
     i2c->write(0x40,i2cCmd,1);
     return rc;
 }
+#endif
 
 void atlastRx(Small *db) {
     int iam = (int) taskId::ATLAST;
