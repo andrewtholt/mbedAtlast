@@ -329,9 +329,11 @@ void parsePacket(const uint8_t *ptr) {
     taskId iam = taskId::ATLAST;
     volatile char dest[32];
     volatile char key[MAX_TOPIC];
+    volatile char value[MAX_MSG];
 
     bzero((char *)dest,sizeof(dest));
     bzero((char *)key,sizeof(key));
+    bzero((char *)value,sizeof(value));
 
     i2cCmd[0] = i2cCmd[1] = 0;
     i2c->write(0x40,i2cCmd,1);
@@ -350,18 +352,12 @@ void parsePacket(const uint8_t *ptr) {
                 int offset = 1;
 
                 int destLen = (int)ptr[offset++];
-
                 strncpy((char *)dest, (char *)&ptr[offset],destLen);
-
                 offset += destLen;
-
                 int keyLen = (int)ptr[offset++];
-
                 strncpy((char *)key, (char *)&ptr[offset], keyLen);
-
                 destId = nameToId((char *)dest);
 
-                msg = mpool.calloc();
                 mkGetMsg(msg, iam, (char*)key);
 
                 valid=true;
@@ -373,6 +369,26 @@ void parsePacket(const uint8_t *ptr) {
 
                 i2cCmd[0] = (uint8_t) offset;
                 i2c->write(0x40,i2cCmd,1);
+
+                int destLen = (int)ptr[offset++];
+                strncpy((char *)dest, (char *)&ptr[offset],destLen);
+                offset += destLen;
+
+                int keyLen = (int)ptr[offset++];
+                strncpy((char *)key, (char *)&ptr[offset], keyLen);
+                destId = nameToId((char *)dest);
+
+                offset += keyLen;
+
+                i2cCmd[0] = (uint8_t) offset;
+                i2c->write(0x40,i2cCmd,1);
+
+                int valueLen = (int)ptr[offset++];
+                strncpy((char *)value, (char *)&ptr[offset],valueLen);
+
+                mkSetMsg(msg,iam,(char *)key,(char *)value);
+
+                valid=true;
             }
             break;
         case highLevelOperation::SUB:
@@ -414,258 +430,6 @@ bool remoteProtocol() {
         parsePacket(packetBuffer);
     }
 }
-
-#if 0
-bool remoteProtocol() {
-    static uint8_t c = 0xff;
-
-    char tmpBuffer[32];
-
-    remoteState State;
-    State =remoteState::INVALID;
-
-    highLevelOperation cmd;
-    cmd = highLevelOperation::NOP;
-
-    volatile uint8_t elementCount=0;
-    uint8_t destLen =0 ;
-    uint8_t destName[32];
-
-    uint8_t keyLen =0 ;
-    uint8_t keyName[32];
-
-    uint8_t valueLen =0 ;
-    uint8_t value[32];
-
-    taskId iam = taskId::ATLAST;
-
-    /*
-       DigitalOut Led2(LED2);
-       DigitalOut Led3(LED3);
-       DigitalOut Led6(LED6);
-
-       Led2=1;
-       Led3=1;
-       Led6=1;
-       */
-
-    I2C *i2c = new I2C(I2C_SDA, I2C_SCL);
-    char i2cCmd[2] ;
-    i2cCmd[0] = i2cCmd[1] = 0;
-    i2c->write(0x40,i2cCmd,1);
-
-    bool rc=true;
-    while(rc == true) {
-
-        switch (State) {
-            case remoteState::INVALID:
-                i2cCmd[0] = 0;
-                i2c->write(0x40,i2cCmd,1);
-                c = getCharEcho(pc);
-
-                if ( c == '*') {
-                    State =remoteState::START;
-                } else {
-                    State =remoteState::INVALID;
-                }
-                break;
-
-            case remoteState::START:
-                i2cCmd[0] = (char)remoteState::START;
-                i2c->write(0x40,i2cCmd,1);
-
-                c = getCharEcho(pc);
-                elementCount = c;
-
-                if( elementCount >=1 and elementCount <= 4) {
-                    State =remoteState::CMD;
-                } else {
-                    State =remoteState::INVALID;
-                }
-                break;
-            case remoteState::CMD:
-                i2cCmd[0] = (char)remoteState::CMD;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t c1 = getCharEcho(pc);
-
-                    cmd = (highLevelOperation)c1;
-
-                    switch(elementCount) {
-                        case 1:
-                            if(cmd == highLevelOperation::EXIT) {
-                                State = remoteState::END;
-                                rc = false;
-                            } else {
-                                State = remoteState::INVALID;
-                            }
-                            i2cCmd[0] = (char)State;
-                            i2c->write(0x40,i2cCmd,1);
-                            break;
-                        case 3:
-                            switch(cmd) {
-                                case highLevelOperation::GET:
-                                    State = remoteState::DEST_LEN;
-                                    break;
-                                case highLevelOperation::SUB:
-                                    State = remoteState::DEST_LEN;
-                                    break;
-                                case highLevelOperation::UNSUB:
-                                    State = remoteState::DEST_LEN;
-                                    break;
-                                default:
-                                    State =remoteState::INVALID;
-                                    break;
-                            }
-                            break;
-                        case 4:
-                            if(cmd == highLevelOperation::SET) {
-                                State = remoteState::DEST_LEN;
-                            } else {
-                                State =remoteState::INVALID;
-                            }
-                            break;
-                        default:
-                            State =remoteState::INVALID;
-                            break;
-                    }
-                }
-                break;
-            case remoteState::DEST_LEN:
-                i2cCmd[0] = (char)remoteState::DEST_LEN;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t dLen = getCharEcho(pc);
-
-                    if (dLen > 32 ) {
-                        State =remoteState::INVALID;
-                    } else {
-                        State =remoteState::DEST;
-                        destLen = (uint8_t) dLen;
-                    }
-                }
-                break;
-            case remoteState::DEST:
-                i2cCmd[0] = (char)remoteState::DEST;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t d=0;
-                    uint8_t buffer[32];
-                    bzero(destName,sizeof(destName));
-                    uint8_t i;
-                    bzero(buffer,32);
-                    for(i=0;i< destLen;i++) {
-                        d = getCharEcho(pc);
-                        buffer[i] = d;
-                    }
-                    memcpy(destName,buffer,i);
-                    State=remoteState::KEY_LEN;
-                }
-                break;
-            case remoteState::KEY_LEN:
-                i2cCmd[0] = (char)remoteState::KEY_LEN;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t kLen = getCharEcho(pc);
-                    keyLen = kLen;
-                }
-                State=remoteState::KEY;
-                break;
-            case remoteState::KEY:
-                i2cCmd[0] = (char)remoteState::KEY;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t buffer[32];
-                    uint8_t i;
-                    for(i=0;i< keyLen;i++) {
-                        uint8_t d;
-                        d = getCharEcho(pc);
-                        buffer[i] = d;
-                    }
-                    memcpy(keyName,buffer,i);
-                }
-
-                if(cmd == highLevelOperation::SET) {
-                    State=remoteState::VALUE_LEN;
-                } else {
-                    State=remoteState::END;
-                }
-                break;
-            case remoteState::VALUE_LEN:
-                i2cCmd[0] = (char)remoteState::VALUE_LEN;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t vLen = getCharEcho(pc);
-                    valueLen = vLen;
-                }
-                State=remoteState::VALUE;
-                break;
-            case remoteState::VALUE :
-                i2cCmd[0] = (char)remoteState::VALUE;
-                i2c->write(0x40,i2cCmd,1);
-                {
-                    uint8_t buffer[32];
-                    uint8_t i;
-                    bzero(value,sizeof(value));
-                    for(i=0;i< valueLen;i++) {
-                        uint8_t d;
-                        d = getCharEcho(pc);
-                        buffer[i] = d;
-                    }
-                    memcpy(value,buffer,i);
-                }
-                State=remoteState::END;
-                break;
-            case remoteState::END:
-                i2cCmd[0] = (char)0xff;
-                i2c->write(0x40,i2cCmd,1);
-                State=remoteState::INVALID;
-
-                osStatus mqStatus;
-
-                //
-                // All the data should now be assemlbled to construct a message.
-                // depending on trhe command.
-                //
-                {
-                    bool valid=false;
-                    message_t *msg = mpool.calloc();
-                    taskId destId;
-
-                    switch(cmd) {
-                        case highLevelOperation::SET:
-                            mkSetMsg(msg, iam, (char*)keyName, (char*)value);
-                            destId = nameToId((char *)destName);
-                            valid=true;
-                            break;
-                        case highLevelOperation::GET:
-                            mkGetMsg(msg, iam, (char*)keyName);
-                            destId = nameToId((char *)destName);
-                            valid=true;
-                            break;
-                        default:
-                            valid=false;
-                            break;
-                    }
-                    if(valid) {
-                        mqStatus = tasks[(int)destId].put(msg);
-
-                        if (mqStatus != 0) {
-                            i2cCmd[0] = (char)0x80;
-                            i2c->write(0x40,i2cCmd,1);
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    i2cCmd[0] = (char)0;
-    i2c->write(0x40,i2cCmd,1);
-    return rc;
-}
-#endif
 
 void atlastRx(Small *db) {
     int iam = (int) taskId::ATLAST;
