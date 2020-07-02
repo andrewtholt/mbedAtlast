@@ -179,7 +179,7 @@ void ledControlTask(void) {
         }
     }
 }
-
+/*
 uint8_t getChar(Serial *port) {
     do {
         ThisThread::yield();
@@ -189,10 +189,31 @@ uint8_t getChar(Serial *port) {
 
     return c;
 }
+*/
+
+uint8_t getChar(Serial *port) {
+    bool charWaiting = false;
+    uint8_t c;
+
+    while( charWaiting == false) {
+        stdio_mutex.lock() ;
+        charWaiting = port->readable();
+
+        if( charWaiting == false ) {
+            stdio_mutex.unlock() ;
+            ThisThread::yield();
+        } else {
+            c=port->getc();
+            stdio_mutex.unlock() ;
+        }
+    }
+    return c;
+}
 
 uint8_t getCharEcho(Serial *port) {
     uint8_t c;
-    port->putc( c=port->getc());
+//    port->putc( c=port->getc());
+    port->putc( c=getChar(port));
 
     return c;
 }
@@ -441,18 +462,16 @@ void atlastRx(Small *db) {
         if (evt.status == osEventMessage ) {
             message_t *message = (message_t*)evt.value.p;
 
-            /*
-             *            stdio_mutex.lock();
-             *            atlastTxString((char *)"\n=========");
-             *            printIam((taskId)iam);
-             *            msgDump(message);
-             *            atlastTxString((char *)"=========\n");
-             *            stdio_mutex.unlock();
-             */
-
             bool fail = p->fromMsgToDb(message);
 
             if(remoteCommand) {
+                uint8_t buffer[255];
+                bzero(buffer,sizeof(buffer));
+                msgToRemote(message, buffer);
+
+            stdio_mutex.lock();
+                atlastTxBuffer((char *)buffer,buffer[1]);
+            stdio_mutex.unlock();
             }
 
             mpool.free(message);

@@ -460,10 +460,6 @@ prim ATH_help() {
         Sl(0);
         So(0);
 
-#ifdef FREERTOS
-        atlastTxBuffer(console, (uint8_t *)"\r\nHelp is not avaialable, yet\r\n") ;
-        atlastTxBuffer(console, (uint8_t *)"\r\nHowever, set your terminal to local echo.\r\n") ;
-#endif
 }
 
 prim ATH_banner() {
@@ -474,18 +470,10 @@ prim ATH_banner() {
 #ifdef MBED
         atlastTxString((char *)msgBuffer);
 #endif
-#ifdef FREERTOS
-                atlastTxBuffer(NULL,msgBuffer);
-                vTaskDelay(1);
-#endif
 
                 strcpy((char *)msgBuffer, (char *)"\rThe original version of this program is in the public domain.\n");
 #ifdef MBED
         atlastTxString((char *)msgBuffer);
-#endif
-#ifdef FREERTOS
-                atlastTxBuffer(NULL,msgBuffer);
-                vTaskDelay(1);
 #endif
                 strcpy((char *)msgBuffer,"\r\nCompiled: " );
                 strcat((char *)msgBuffer, __DATE__);
@@ -495,11 +483,6 @@ prim ATH_banner() {
 
 #ifdef MBED
         atlastTxString((char *)msgBuffer);
-#endif
-
-#ifdef FREERTOS
-                atlastTxBuffer(NULL, (char *)msgBuffer);
-                vTaskDelay(1);
 #endif
 }
 
@@ -886,10 +869,6 @@ prim ATH_dump() {
 #ifdef MBED
     atlastTxByte('\r');
     atlastTxByte('\n');
-#endif
-
-#ifdef FREERTOS
-    atlastTxBuffer(console, (uint8_t *)"\r\n") ;
 #endif
 
     int i=0;
@@ -1485,16 +1464,9 @@ prim FR_displayRecord() {
     atlastTxString(localBuffer);
 #endif
 
-#ifdef FREERTOS
-        atlastTxBuffer(console, (uint8_t *)localBuffer) ;
-#endif
     sprintf(localBuffer,"Value     : %s\n", (char *)nlistGetDef(rec));
 #ifdef MBED
     atlastTxString(localBuffer);
-#endif
-
-#ifdef FREERTOS
-        atlastTxBuffer(console, (uint8_t *)localBuffer) ;
 #endif
 
     sprintf(localBuffer, "Published :" );
@@ -1506,9 +1478,6 @@ prim FR_displayRecord() {
     }
 #ifdef MBED
     atlastTxString(localBuffer);
-#endif
-#ifdef FREERTOS
-        atlastTxBuffer(console, (uint8_t *)localBuffer) ;
 #endif
     Pop;
 }
@@ -3189,9 +3158,6 @@ prim P_question()		      /* Print value at address */
 //    sprintf(outBuffer,(base == 16 ? "%lX" : "%ld "), *((stackitem *) S0)); // EMBEDDED
     sprintf(outBuffer,"Hello\n");
 #endif
-#ifdef FREERTOS
-    atlastTxBuffer(console, (uint8_t *)outBuffer) ;
-#else
     printf("%s",outBuffer);
 #endif
 */
@@ -5399,9 +5365,6 @@ void exword( dictword *wp) {
     if (atl_trace) {
 
         P_dots();
-#ifdef FREERTOS
-        atlastTxBuffer(console, (uint8_t *)"\t\t") ;
-#endif
 #ifdef MBED
     atlastTxByte( '\t' );
     atlastTxByte( '\t' );

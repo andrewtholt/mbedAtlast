@@ -16,4 +16,11 @@ extern "C" {
             atlastTxByte( ptr[i]);
         }
     }
+
+    void atlastTxBuffer(char *ptr, int len) {
+        for(int i=0; i<len; i++) {
+            atlastTxByte( ptr[i]);
+        }
+    }
+
 };
