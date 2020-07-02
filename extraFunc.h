@@ -77,7 +77,7 @@ static struct primfcn cpp_extras[] = {
 
     {(char *)"0SEND-MSG", sendMsg},
 
-    {(char *)"0MAINTID", getMainId},
+    {(char *)"0MAIN-TID", getMainId},
     {(char *)"0LED-TID", getLEDId},
     {(char *)"0I2C-TID", getI2CId},
 

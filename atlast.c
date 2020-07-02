@@ -4171,9 +4171,11 @@ prim P_quit()			      /* Terminate execution */
 #endif
     ip = NULL;			      /* Stop execution of current word */
 }
-
-prim P_abort()			      /* Abort, clearing data stack */
-{
+//
+// Abort, clearing data stack
+//
+prim P_abort() {
+    /*
     Sl(1);
     So(0);
     char buffer[16];
@@ -4186,11 +4188,12 @@ prim P_abort()			      /* Abort, clearing data stack */
 #ifdef MBED
         atlastTxString(buffer);
 #endif
-        P_clear();			      /* Clear the data stack */
+*/
+        P_clear();              // Clear the data stack
         pwalkback();
-        P_quit();			      /* Shut down execution */
+        P_quit();               // Shut down execution
 
-    }
+//    }
 }
 
 /* Abort, printing message */
