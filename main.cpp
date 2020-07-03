@@ -45,7 +45,7 @@ MemoryPool<message_t, 8> mpool;
 Serial *pc ;
 Mutex stdio_mutex;
 
-bool remoteCommand = true;
+bool remoteCommand = false;
 bool remoteProtocol() ;
 /*
  * SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
@@ -95,13 +95,18 @@ void initFs() {
 void ledControlTask(void) {
 
     int count=-1;
+    volatile bool led=false;
+
     taskId iam = taskId::LED_CTL;
 
     bool runFlag = true;
 
 
-    //    DigitalOut myLed(LED1);
-    DigitalOut myLed(PD_14);
+    // Commented out because th Nucleo F411 use this for SPI
+//    DigitalOut myLed(LED1);
+    DigitalOut myLed(PA_10);
+
+    myLed = 1;
 
     mbedSmall *db = new mbedSmall();
     parseMsg *p = new parseMsg( db );
@@ -167,12 +172,15 @@ void ledControlTask(void) {
             mpool.free(message);
         }
 
+
         string ledState = db->Get("LED1");
         if (ledState == "ON") {
-            if(myLed == 1) {
-                myLed = 0;
-            } else {
+            if(led == true) {
                 myLed = 1;
+                led = false;
+            } else {
+                myLed = 0;
+                led = true;
             }
         } else {
             myLed = 0;

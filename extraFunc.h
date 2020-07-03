@@ -43,6 +43,15 @@ void P_fwrite();
 void P_fflush();
 void P_fseek();
 
+void P_listDirectory();
+void P_dCat() ;
+void P_dRm() ;
+void P_dTouch() ;
+
+void P_catFile() ;
+void P_rm() ;
+void P_touch() ;
+
 void P_fclose();
 void P_i2cScan();
 void P_i2cOpen();
@@ -107,6 +116,15 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0FWRITE", P_fwrite},
     {(char *)"0FSEEK", P_fseek},
     {(char *)"0FFLUSH", P_fflush},
+
+    {(char *)"0LS", P_listDirectory},
+    {(char *)"0$CAT", P_dCat},
+    {(char *)"0$RM", P_dRm},
+    {(char *)"0$TOUCH", P_dTouch},
+
+    {(char *)"1CAT", P_catFile},
+    {(char *)"1RM", P_rm},
+    {(char *)"1TOUCH", P_touch},
 
     {(char *)"0FCLOSE", P_fclose},
 //    {NULL, (codeptr) 0}

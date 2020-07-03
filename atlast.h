@@ -73,6 +73,8 @@ extern int atl_eval(char *);
 extern void atl_memstat();
 extern void ATH_banner();
 
+void ATH_Token();
+
 #ifdef EMBEDDED
 #define OUTBUFF_SIZE 255
 #endif

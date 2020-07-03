@@ -33,6 +33,7 @@ char dataBuffer[255];  //Somewhat to put data.
 extern "C" {
     #include "extraFunc.h"
     #include "atldef.h"
+    #include "atlast.h"
 }
 extern bool remoteCommand;
 
@@ -40,6 +41,85 @@ using namespace std;
 
 prim crap() {
 }
+
+prim P_listDirectory() {
+    DIR *d = opendir("/fs/");
+
+    if(!d) {
+        atlastTxString((char *)"opendir failed\r\n");
+    } else {
+        atlastTxString((char *)"root directory:\n");
+    while (true) {
+        struct dirent *e = readdir(d);
+        if (!e) {
+            break;
+        }
+        atlastTxString((char*)"\r    ");
+        atlastTxString(e->d_name);
+        atlastTxString((char *) "\r\n");
+        }
+    }
+}
+
+// Stack: filename -- fail_flag
+//
+prim P_dCat() {
+    bool fail = true;
+
+    char *fname = (char *)S0;
+    char buffer[255];
+
+    FILE *f = fopen(fname,"r") ;
+    if(!f) {
+        fail = true;
+    } else {
+        while (!feof(f)) {
+            bzero(buffer,255);
+            size_t ret= fread(buffer, 1,255, f);
+            /*
+            int c = fgetc(f);
+            atlastTxByte(c);
+            */
+            atlastTxBuffer(buffer, ret);
+        }
+        fail = false;
+    }
+    S0 = (stackitem) fail;
+}
+
+prim P_dRm() {
+    char *fname = (char *)S0;
+
+    S0 = (stackitem) (remove( fname) < 0) ? -1 : 0 ;
+}
+
+prim P_dTouch() {
+    char *fname = (char *)S0;
+
+    FILE *fd = fopen(fname, "a");
+
+    if(fd != 0) {
+        fclose(fd);
+    }
+    Pop;
+}
+
+prim P_catFile() {
+   ATH_Token();
+   P_dCat();
+}
+
+prim P_rm() {
+   ATH_Token();
+   P_dRm();
+}
+
+prim P_touch() {
+extern void ATH_Token();
+   ATH_Token();
+   P_dTouch();
+}
+
 
 prim P_setRemoteCommand() {
     remoteCommand = (bool)S0;
@@ -461,9 +541,12 @@ prim P_i2cScan() {
 
     i2c->lock();
     for(address=1;address<127;address++) {
+        sprintf(buffer,"%02x\b\b", address);
+        atlastTxString((char *)buffer);
+
         ack = i2c->write(address, "11", 1);
         if (ack == 0) {
-            sprintf(buffer,"\tFound at %3d -- 0x%02x\r\n", address,address);
+            sprintf(buffer,"\r\n\tFound at %3d -- 0x%02x\r\n", address,address);
             atlastTxString((char *)buffer);
         }
         ThisThread::sleep_for(200);

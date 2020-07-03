@@ -18,8 +18,11 @@ file tst
 
         tst 0 fseek
 
-        "Hello There" buffer strcpy
+        "What's New " buffer strcpy
 
+        buffer dup strlen tst fwrite
+
+        1 "%ld\r\n" buffer strform
         buffer dup strlen tst fwrite
 
         tst fflush
@@ -28,4 +31,4 @@ file tst
     then
 ;
 
-fsTest
+
