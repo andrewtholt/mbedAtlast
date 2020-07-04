@@ -7,7 +7,8 @@ file tst
 : fsTest
     buffer 255 erase
 
-    "/fs/numbers.txt" "r+" tst fopen if
+\    "/fs/numbers.txt" "r+" tst fopen if
+    "/fs/TEST" "r+" tst fopen if
 
         buffer 10 tst fread
         cr "Length :" type  . cr

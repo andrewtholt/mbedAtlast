@@ -51,6 +51,7 @@ void P_dTouch() ;
 void P_catFile() ;
 void P_rm() ;
 void P_touch() ;
+void P_DL();
 
 void P_fclose();
 void P_i2cScan();
@@ -125,6 +126,7 @@ static struct primfcn cpp_extras[] = {
     {(char *)"1CAT", P_catFile},
     {(char *)"1RM", P_rm},
     {(char *)"1TOUCH", P_touch},
+    {(char *)"1DL", P_DL},
 
     {(char *)"0FCLOSE", P_fclose},
 //    {NULL, (codeptr) 0}

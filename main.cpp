@@ -187,17 +187,6 @@ void ledControlTask(void) {
         }
     }
 }
-/*
-uint8_t getChar(Serial *port) {
-    do {
-        ThisThread::yield();
-    } while(!port->readable());
-
-    uint8_t c=port->getc();
-
-    return c;
-}
-*/
 
 uint8_t getChar(Serial *port) {
     bool charWaiting = false;

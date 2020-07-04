@@ -34,6 +34,7 @@ extern "C" {
     #include "extraFunc.h"
     #include "atldef.h"
     #include "atlast.h"
+#include "protocol.h"
 }
 extern bool remoteCommand;
 
@@ -120,6 +121,82 @@ extern void ATH_Token();
    P_dTouch();
 }
 
+extern uint8_t getChar(Serial *);
+extern uint8_t getBuffer(Serial *, uint8_t *buffer, const uint8_t len);
+
+prim P_DL() {
+    char fname[255];
+    char in[255];
+
+    bzero(fname, sizeof(fname));
+    bzero(in, sizeof(in));
+
+    I2C *i2c = new I2C(I2C_SDA, I2C_SCL);
+    char i2cCmd[2] ;
+
+    i2cCmd[0] = i2cCmd[1] = 0;
+    i2c->write(0x40,i2cCmd,1);
+
+    uint8_t c;
+    do {
+        c = getChar(pc);
+
+        if( c == CAN ) {
+            return;
+        }
+    } while ( c != STX);
+
+    i2cCmd[0] = c;
+    i2c->write(0x40,i2cCmd,1);
+
+    atlastTxByte(ACK);
+    // Get length of filename
+    uint8_t fnameLen = getChar(pc);
+
+    // get Filename
+    getBuffer(pc,(uint8_t *)in,fnameLen);
+
+    strcpy(fname,"/fs/");
+    strcat(fname,in);
+
+    FILE *fd = fopen( fname, "w");
+
+    // Failed to open file.
+    //
+    if(!fd) {
+        atlastTxByte(NAK);
+        return;
+    } else {
+        atlastTxByte(ACK);
+    }
+    uint8_t blockLen=0;
+    uint8_t rdLen=0;
+
+    int wrLen=0;
+    do {
+        bzero(in, sizeof(in));
+        c = (uint8_t)getChar(pc);
+
+        if( c == STX) {
+    // Get block size (<= 255)
+            blockLen = (uint8_t)getChar(pc);
+    // Get block.
+            rdLen = (uint8_t)getBuffer(pc,(uint8_t *)in,blockLen);
+            wrLen=fwrite(in,1,rdLen,fd);
+
+        i2cCmd[0] = wrLen;
+        i2c->write(0x40,i2cCmd,1);
+
+            fflush(fd);
+            atlastTxByte(ACK);
+        } else {
+            break;
+        }
+    }
+    while(true) ;
+    atlastTxByte(ACK);
+    fclose(fd);
+}
 
 prim P_setRemoteCommand() {
     remoteCommand = (bool)S0;
