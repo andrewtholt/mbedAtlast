@@ -44,7 +44,8 @@ prim crap() {
 }
 
 prim P_listDirectory() {
-    DIR *d = opendir("/fs/");
+//    DIR *d = opendir("/fs/");
+    DIR *d = opendir(FS);
 
     if(!d) {
         atlastTxString((char *)"opendir failed\r\n");
@@ -69,8 +70,13 @@ prim P_dCat() {
 
     char *fname = (char *)S0;
     char buffer[255];
+    char nameBuffer[255];
 
-    FILE *f = fopen(fname,"r") ;
+    strcat(nameBuffer,FS);
+    strcat(nameBuffer, fname);
+
+//    FILE *f = fopen(fname,"r") ;
+    FILE *f = fopen(nameBuffer,"r") ;
     if(!f) {
         fail = true;
     } else {
@@ -89,15 +95,26 @@ prim P_dCat() {
 }
 
 prim P_dRm() {
+    char nameBuffer[255];
+
     char *fname = (char *)S0;
 
-    S0 = (stackitem) (remove( fname) < 0) ? -1 : 0 ;
+    strcat(nameBuffer,FS);
+    strcat(nameBuffer, fname);
+
+//    S0 = (stackitem) (remove( fname) < 0) ? -1 : 0 ;
+    S0 = (stackitem) (remove( nameBuffer) < 0) ? -1 : 0 ;
 }
 
 prim P_dTouch() {
+    char nameBuffer[255];
     char *fname = (char *)S0;
 
-    FILE *fd = fopen(fname, "a");
+    strcat(nameBuffer,FS);
+    strcpy(nameBuffer, fname);
+
+//    FILE *fd = fopen(fname, "a");
+    FILE *fd = fopen(nameBuffer, "a");
 
     if(fd != 0) {
         fclose(fd);
@@ -156,7 +173,8 @@ prim P_DL() {
     // get Filename
     getBuffer(pc,(uint8_t *)in,fnameLen);
 
-    strcpy(fname,"/fs/");
+//    strcpy(fname,"/fs/");
+    strcpy(fname,FS);
     strcat(fname,in);
 
     FILE *fd = fopen( fname, "w");
@@ -405,38 +423,6 @@ prim subscribers() {
 void cpp_extrasLoad() {
     atl_primdef( cpp_extras );
 }
-/*
-void initFs() {
-    atlastTxString((char *)"\r\nSetup filesystem\r\n");
-    blockDevice = new SDBlockDevice (PA_7, PA_6, PA_5, PA_8);
-    fileSystem = new LittleFileSystem("fs");
-
-    atlastTxString((char *)"Mounting the filesystem... \r\n");
-
-    int err = fileSystem->mount(blockDevice);
-
-    if(err) {
-        atlastTxString((char *)"\r\nNo filesystem found, formatting...\r\n");
-        err = fileSystem->reformat(blockDevice);
-
-        if(err) {
-            error("error: %s (%d)\r\n", strerror(-err), err);
-        } else {
-            atlastTxString((char *)"... done.\r\n");
-        }
-    } else {
-        atlastTxString((char *)"... done.\r\n");
-    }
-
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
-    if(!fd) {
-        atlastTxString((char *)" failed to open file.\r\n");
-    } else {
-        atlastTxString((char *)"closing file.\r\n");
-        fclose(fd);
-    }
-}
-*/
 
 /* Open file: fname fmodes fd -- flag */
 prim P_fopen()	{
@@ -448,19 +434,15 @@ prim P_fopen()	{
 
 //    Isfile(S0);
 
-    /*
-    FILE *fd=fopen("/fs/numbers.txt", "r+");
-    if(!fd) {
-        atlastTxString((char *)" failed to fopen file.\r\n");
-    } else {
-        fclose(fd);
-    }
-    */
-
+    char nameBuffer[255];
     char * fname = (char *) S2;
     char *mode =(char *)S1;
 
-    FILE *fd = fopen(fname,mode);
+    strcpy(nameBuffer, FS);
+    strcat(nameBuffer,fname);
+
+//    FILE *fd = fopen(fname,mode);
+    FILE *fd = fopen(nameBuffer,mode);
 
     if (fd == NULL) {
         stat = false;

@@ -1,20 +1,20 @@
 /*
 
-			      A T L A S T
+                  A T L A S T
 
-	 Autodesk Threaded Language Application System Toolkit
+     Autodesk Threaded Language Application System Toolkit
 
-		 Definitions for components of ATLAST
+         Definitions for components of ATLAST
 
      Designed and implemented in January of 1990 by John Walker.
 
 
-    This  file	contains the definitions for modules within the ATLAST
+    This  file  contains the definitions for modules within the ATLAST
     language system itself.  Definitions used by programs that link to
-    ATLAST   are   in	ATLAST.H,  which  is  included	by  this  file
+    ATLAST   are   in   ATLAST.H,  which  is  included  by  this  file
     automatically.
 
-		This program is in the public domain.
+        This program is in the public domain.
 
 */
 
@@ -28,26 +28,27 @@
 #include <stdint.h>
 #include "atlast.h"                   /* Define user linkage structures */
 
-typedef void (*codeptr)();	      /* Machine code pointer */
+typedef void (*codeptr)();        /* Machine code pointer */
 
 /*  Dictionary word entry  */
 
 typedef struct dw {
-    struct dw *wnext;		      /* Next word in dictionary */
-    char *wname;		      /* Word name.  The first character is
-					 actually the word flags, including
-					 the (IMMEDIATE) bit. */
-    codeptr wcode;		      /* Machine code implementation */
+    struct dw *wnext;             /* Next word in dictionary */
+    char *wname;              /* Word name.  The first character is
+                     actually the word flags, including
+                     the (IMMEDIATE) bit. */
+    codeptr wcode;            /* Machine code implementation */
 } dictword;
 
 /*  Word flag bits  */
 
-#define IMMEDIATE   1		      /* Word is immediate */
-#define WORDUSED    2		      /* Word used by program */
-#define WORDHIDDEN  4		      /* Word is hidden from lookup */
+#define IMMEDIATE   1             /* Word is immediate */
+#define WORDUSED    2             /* Word used by program */
+#define WORDHIDDEN  4             /* Word is hidden from lookup */
 #define VOCABULARY  8             /* ATH Word is a vocabulary definition */
 
-/*  Data types	*/
+#define FS "/fs/"
+/*  Data types  */
 
 typedef long stackitem;
 typedef dictword **rstackitem;
@@ -57,11 +58,11 @@ typedef dictword **rstackitem;
 
 /* Token types */
 
-#define TokNull     0		      /* Nothing scanned */
-#define TokWord     1		      /* Word stored in token name buffer */
-#define TokInt	    2		      /* Integer scanned */
-#define TokReal     3		      /* Real number scanned */
-#define TokString   4		      /* String scanned */
+#define TokNull     0             /* Nothing scanned */
+#define TokWord     1             /* Word stored in token name buffer */
+#define TokInt      2             /* Integer scanned */
+#define TokReal     3             /* Real number scanned */
+#define TokString   4             /* String scanned */
 
 /*  Primitive definition table entry  */
 
@@ -70,35 +71,35 @@ struct primfcn {
     codeptr pcode;
 };
 
-/*  Internal state marker item	*/
+/*  Internal state marker item  */
 
 typedef struct {
-    stackitem *mstack;		      /* Stack position marker */
-    stackitem *mheap;		      /* Heap allocation marker */
-    dictword ***mrstack;	      /* Return stack position marker */
-    dictword *mdict;		      /* Dictionary marker */
+    stackitem *mstack;            /* Stack position marker */
+    stackitem *mheap;             /* Heap allocation marker */
+    dictword ***mrstack;          /* Return stack position marker */
+    dictword *mdict;              /* Dictionary marker */
 } atl_statemark;
 
 // #ifdef EXPORT
 #define Exported
 #ifndef NOMANGLE
-#define stk	    atl__sp
-#define stack	    atl__sk
+#define stk     atl__sp
+#define stack       atl__sk
 #define stackbot    atl__sb
 #define stacktop    atl__st
-#define rstk	    atl__rp
-#define rstack	    atl__rk
+#define rstk        atl__rp
+#define rstack      atl__rk
 #define rstackbot   atl__rb
 #define rstacktop   atl__rt
-#define heap	    atl__hb
-#define hptr	    atl__hp
+#define heap        atl__hb
+#define hptr        atl__hp
 #define heapbot     atl__hs
 #define heaptop     atl__ht
-#define dict	    atl__dh
+#define dict        atl__dh
 #define dictprot    atl__dp
-#define strbuf	    atl__ts
+#define strbuf      atl__ts
 #define cstrbuf     atl__tn
-#define ip	    atl__ip
+#define ip      atl__ip
 #define curword     atl__cw
 #define createword  atl__wd
 // #endif /* NOMANGLE */
@@ -115,20 +116,20 @@ extern dictword ***rstackmax;
 
 #ifdef ALIGNMENT
 #ifndef NOMANGLE
-#define rbuf0	    atl__r0
-#define rbuf1	    atl__r1
-#define rbuf2	    atl__r2
+#define rbuf0       atl__r0
+#define rbuf1       atl__r1
+#define rbuf2       atl__r2
 #endif /* NOMANGLE */
 extern atl_real rbuf0, rbuf1, rbuf2;  /* Real temporaries for alignment */
 #endif
 
-#define FmodeR	    1		      /* Read mode */
-#define FmodeW	    2		      /* Write mode */
-#define FmodeB	    4		      /* Binary file mode */
-#define FmodeCre    8		      /* Create new file */
+#define FmodeR      1             /* Read mode */
+#define FmodeW      2             /* Write mode */
+#define FmodeB      4             /* Binary file mode */
+#define FmodeCre    8             /* Create new file */
 
 extern stackitem *stack, *stk, *stackbot, *stacktop, *heap, *hptr,
-		 *heapbot, *heaptop;
+         *heapbot, *heaptop;
 extern dictword ***rstack, ***rstk, ***rstackbot, ***rstacktop;
 extern dictword *dict, *dictprot, *curword, *createword;
 extern dictword **ip;
@@ -196,12 +197,12 @@ extern char *atl_fgetsp();
 #endif
 #endif
 #ifdef MSDOS
-#define FBmode			      /* DOS requires binary file flag */
+#define FBmode                /* DOS requires binary file flag */
 #endif
 #ifdef Macintosh
-#define FBmode			      /* Macintosh requires binary file flag */
+#define FBmode                /* Macintosh requires binary file flag */
 #endif
-#ifdef OS2			      /* OS/2 requires binary file flag */
+#ifdef OS2                /* OS/2 requires binary file flag */
 #define FBmode
 #endif
 
@@ -212,7 +213,7 @@ extern char *atl_fgetsp();
 #define STATIC static
 
 #ifdef ADS                            /* Definitions if we're an ADS app */
-#define printf ads_printf	      /* Print through ADS */
+#define printf ads_printf         /* Print through ADS */
 #define Keybreak() {static int n=0; if ((n=(n+1)&127)==0) {UbI(); broken=ads_usrbrk();}}
 #endif
 
@@ -220,16 +221,16 @@ extern char *atl_fgetsp();
 
 /*  Stack access definitions  */
 
-#define S0  stk[-1]		      /* Top of stack */
-#define S1  stk[-2]		      /* Next on stack */
-#define S2  stk[-3]		      /* Third on stack */
-#define S3  stk[-4]		      /* Fourth on stack */
-#define S4  stk[-5]		      /* Fifth on stack */
-#define S5  stk[-6]		      /* Sixth on stack */
-#define Pop stk--		      /* Pop the top item off the stack */
-#define Pop2 stk -= 2		      /* Pop two items off the stack */
-#define Npop(n) stk -= (n)	      /* Pop N items off the stack */
-#define Push *stk++		      /* Push item onto stack */
+#define S0  stk[-1]           /* Top of stack */
+#define S1  stk[-2]           /* Next on stack */
+#define S2  stk[-3]           /* Third on stack */
+#define S3  stk[-4]           /* Fourth on stack */
+#define S4  stk[-5]           /* Fifth on stack */
+#define S5  stk[-6]           /* Sixth on stack */
+#define Pop stk--             /* Pop the top item off the stack */
+#define Pop2 stk -= 2             /* Pop two items off the stack */
+#define Npop(n) stk -= (n)        /* Pop N items off the stack */
+#define Push *stk++           /* Push item onto stack */
 
 #ifdef MEMSTAT
 #define Mss(n) if ((stk+(n))>stackmax) stackmax = stk+(n);
@@ -252,11 +253,11 @@ extern char *atl_fgetsp();
 
 /*  Return stack access definitions  */
 
-#define R0  rstk[-1]		      /* Top of return stack */
-#define R1  rstk[-2]		      /* Next on return stack */
-#define R2  rstk[-3]		      /* Third on return stack */
-#define Rpop rstk--		      /* Pop return stack */
-#define Rpush *rstk++		      /* Push return stack */
+#define R0  rstk[-1]              /* Top of return stack */
+#define R1  rstk[-2]              /* Next on return stack */
+#define R2  rstk[-3]              /* Third on return stack */
+#define Rpop rstk--           /* Pop return stack */
+#define Rpush *rstk++             /* Push return stack */
 #ifdef NOMEMCHECK
 #define Rsl(x)
 #define Rso(n)
@@ -274,13 +275,13 @@ extern char *atl_fgetsp();
 #define Ho(n)  Msh(n) if ((hptr+(n))>heaptop){heapover(); return Memerrs;}
 #define Hpc(n) if ((((stackitem *)(n))<heapbot)||(((stackitem *)(n))>=heaptop)){badpointer(); return Memerrs;}
 #endif
-#define Hstore *hptr++		      /* Store item on heap */
-#define state  (*heap)		      /* Execution state is first heap word */
+#define Hstore *hptr++            /* Store item on heap */
+#define state  (*heap)            /* Execution state is first heap word */
 
-// #define prim static void	      /* Attributes of primitive functions */
-#define prim  void	      /* Attributes of primitive functions */
+// #define prim static void       /* Attributes of primitive functions */
+#define prim  void        /* Attributes of primitive functions */
 
-/*  Real number definitions (used only if REAL is configured).	*/
+/*  Real number definitions (used only if REAL is configured).  */
 
 #define Realsize (sizeof(atl_real)/sizeof(stackitem)) /* Stack cells / real */
 #define Realpop  stk -= Realsize      /* Pop real from stack */
@@ -293,9 +294,9 @@ extern char *atl_fgetsp();
 #define SREAL0(x) rbuf2=(x); (void)memcpy((char *) &S1, (char *) &rbuf2, sizeof(atl_real))
 #define SREAL1(x) rbuf2=(x); (void)memcpy((char *) &S3, (char *) &rbuf2, sizeof(atl_real))
 #else
-#define REAL0	*((atl_real *) &S1)   /* First real on stack */
-#define REAL1	*((atl_real *) &S3)   /* Second real on stack */
-#define REAL2	*((atl_real *) &S5)   /* Third real on stack */
+#define REAL0   *((atl_real *) &S1)   /* First real on stack */
+#define REAL1   *((atl_real *) &S3)   /* Second real on stack */
+#define REAL2   *((atl_real *) &S5)   /* Third real on stack */
 #define SREAL0(x) *((atl_real *) &S1) = (x)
 #define SREAL1(x) *((atl_real *) &S3) = (x)
 #endif
@@ -303,7 +304,7 @@ extern char *atl_fgetsp();
 /*  File I/O definitions (used only if FILEIO is configured).  */
 
 #define FileSent    0x831FDF9DL       /* Courtesy Marinchip Radioactive
-					 random number generator */
+                     random number generator */
 #define Isfile(x) Hpc(x); if (*((stackitem *)(x))!=FileSent) {V printf("\nNot a file\n");return;}
 #define FileD(x)  ((FILE *) *(((stackitem *) (x)) + 1))
 #define Isopen(x) if (FileD(x) == NULL) {V printf("\nFile not open\n");return;}

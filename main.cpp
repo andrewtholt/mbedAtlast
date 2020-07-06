@@ -8,6 +8,7 @@
 // #include "Small.h"
 #include "mbedSmall.h"
 #include "atlastUtils.h"
+#include <string>
 
 
 #define ECHO
@@ -81,8 +82,10 @@ void initFs() {
         bool fail=false;
     }
 
+    /*
     if(fail == false) {
-        FILE *fd=fopen("/fs/numbers.txt", "r+");
+
+        FILE *fd=fopen(fname.c_str() "r+");
         if(!fd) {
             atlastTxString((char *)" failed to open file.\r\n");
         } else {
@@ -90,6 +93,7 @@ void initFs() {
             fclose(fd);
         }
     }
+    */
 }
 
 void ledControlTask(void) {
