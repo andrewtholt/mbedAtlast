@@ -32,9 +32,11 @@ char dataBuffer[255];  //Somewhat to put data.
 
 extern "C" {
     #include "extraFunc.h"
-    #include "atldef.h"
     #include "atlast.h"
-#include "protocol.h"
+    #include "protocol.h"
+    #include "atldef.h"
+
+    extern int Fred(int);
 }
 extern bool remoteCommand;
 
@@ -144,6 +146,7 @@ extern uint8_t getBuffer(Serial *, uint8_t *buffer, const uint8_t len);
 prim P_DL() {
     char fname[255];
     char in[255];
+
 
     bzero(fname, sizeof(fname));
     bzero(in, sizeof(in));

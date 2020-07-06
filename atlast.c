@@ -5314,8 +5314,7 @@ void stakover() {
 
 /*  STAKUNDER  --  Recover from stack underflow.  */
 
-void stakunder()
-{
+void stakunder() {
     trouble("Stack underflow");
     evalstat = ATL_STACKUNDER;
 }
