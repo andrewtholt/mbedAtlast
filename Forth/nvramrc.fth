@@ -1,9 +1,5 @@
-5 constant LED1
 
-: sifting
-    cr
-    token $sift
-;
+hex
 
-: [char] char ; immediate
+"Hello from nvramrc" type cr
 

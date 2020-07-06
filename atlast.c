@@ -3228,12 +3228,13 @@ prim P_dotparen() {
 prim P_emit() {
     Sl(1);
 
-#ifdef FREERTOS
+#ifdef MBED
     atlastTxByte(S0);
 #endif
 #ifdef LINUX
     putchar(S0);
 #endif
+
     Pop;
 }
 /* Print string pointed to by stack */
@@ -3278,6 +3279,11 @@ prim ATH_sift() {
         dw = dw->wnext;
     }
 
+}
+
+prim ATH_sifting() {
+    ATH_Token();
+    ATH_sift();
 }
 
 /* List words */
@@ -4962,6 +4968,7 @@ static struct primfcn primt[] = {
     {"0TYPE", P_type},
     {"0WORDS", P_words},
     {"0$SIFT", ATH_sift},
+    {"1SIFTING", ATH_sifting},
     {"0EMIT", P_emit},
 #endif /* CONIO */
 #ifdef LINUX

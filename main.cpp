@@ -81,19 +81,6 @@ void initFs() {
         atlastTxString((char *)"... done.\r\n");
         bool fail=false;
     }
-
-    /*
-    if(fail == false) {
-
-        FILE *fd=fopen(fname.c_str() "r+");
-        if(!fd) {
-            atlastTxString((char *)" failed to open file.\r\n");
-        } else {
-            atlastTxString((char *)"closing file.\r\n");
-            fclose(fd);
-        }
-    }
-    */
 }
 
 void ledControlTask(void) {
@@ -305,6 +292,17 @@ void  atlast(Small *db) {
         initFs();
         stdio_mutex.unlock();
     }
+
+    strcpy((char *)lineBuffer,FS);
+    strcat((char *)lineBuffer,"nvramrc.fth");
+
+    FILE *fd = fopen((char *)lineBuffer,"r");
+
+    if( fd ) {
+        int estat = atl_load(fd);
+        fclose(fd);
+    }
+
 
     while(runFlag) {
         (void)memset(outBuffer,0,sizeof(outBuffer));
