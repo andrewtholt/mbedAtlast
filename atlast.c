@@ -3573,7 +3573,7 @@ prim P_fload()                /* Load source file:  fd -- evalstat */
     Push = estat;
 }
 
-prim P_include() {
+prim P_dInclude() {
     int estat;
     Sl(1);
     FILE *fd;
@@ -3596,6 +3596,11 @@ prim P_include() {
     fclose(fd);
 
     Pop;
+}
+
+prim P_include() {
+    ATH_Token();
+    P_dInclude();
 }
 
 #endif /* FILEIO */
@@ -5004,7 +5009,8 @@ static struct primfcn primt[] = {
     {"0FTELL", P_ftell},
     //    {"0FSEEK", P_fseek},
     {"0FLOAD", P_fload},
-    {"0$INCLUDE", P_include},
+    {"0$INCLUDE", P_dInclude},
+    {"1INCLUDE", P_include},
     {(char *)"0PWD", ATH_pwd},
     {(char *)"0CD", ATH_cd},
     {(char *)"0DIR", RT_dir},

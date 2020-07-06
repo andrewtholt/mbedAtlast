@@ -13,7 +13,7 @@ variable out
 
     out @ msg-dump
 
-    led@ out @ send-msg
+    led-tid out @ send-msg
 
     0 out !
 ;
@@ -29,7 +29,7 @@ variable out
 
     out @ msg-dump
 
-    led@ out @ send-msg
+    led-tid out @ send-msg
 
     0 out !
 ;
@@ -44,7 +44,7 @@ variable out
 
     out @ msg-dump
 
-    led@ out @ send-msg
+    led-tid out @ send-msg
     0 out !
 ;
 
