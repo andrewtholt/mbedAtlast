@@ -899,7 +899,9 @@ prim ATH_erase() {
 
     Pop2;
 }
-
+// 
+// Stack: address length value
+//
 prim ATH_fill() {
     Sl(3);
 
@@ -2847,6 +2849,24 @@ prim P_strint()               /* String to integer */
     S0 = (stackitem) eptr;
     Push = is;
 }
+// 
+// Convert an integer to a string
+// Stack: n ptr --
+//
+prim P_itoa() {
+    char *buffer = (char *)S0;
+    int v = (int)S1;
+
+    char *p = itoa(v, buffer,10);
+
+    Pop2;
+}
+
+prim P_atoi() {
+    P_strint();
+    P_nip();
+}
+
 
 #ifdef REAL
 prim P_strreal()              /* String to real */
@@ -4840,6 +4860,8 @@ static struct primfcn primt[] = {
     {"0STRREAL", P_strreal},
 #endif
     {"0STRINT", P_strint},
+    {"0ATOI", P_atoi},
+    {"0ITOA", P_itoa},
 #endif /* STRING */
 
 #ifdef REAL

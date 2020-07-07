@@ -65,6 +65,16 @@ void P_i2cClose();
 
 void P_ms();
 
+// EYEWINK LED display.
+void LED_cls() ;
+void LED_write() ;
+void LED_type() ;
+prim LED_key() ;
+prim LED_brightness() ;
+prim LED_on() ;
+prim LED_off() ;
+prim LED_locate() ;
+
 static struct primfcn cpp_extras[] = {
     {(char *)"0TESTING", crap},
     {(char *)"0REMOTE-CMD", P_setRemoteCommand},
@@ -129,8 +139,19 @@ static struct primfcn cpp_extras[] = {
     {(char *)"1DL", P_DL},
 
     {(char *)"0FCLOSE", P_fclose},
+
+    {(char *)"0LED-CLS", LED_cls},
+    {(char *)"0LED-WRITE", LED_write},
+    {(char *)"0LED-TYPE", LED_type},
+    {(char *)"0LED-KEY", LED_key},
+    {(char *)"0LED-BRIGHT", LED_brightness},
+    {(char *)"0LED-ON", LED_on},
+    {(char *)"0LED-OFF", LED_off},
+    {(char *)"0LED-LOC", LED_locate},
+
 //    {NULL, (codeptr) 0}
     {nullptr, (codeptr) 0}
 };
 
-
+void LED_cls() ;
+void LED_write() ;

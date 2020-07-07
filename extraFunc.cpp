@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include "TM1637/TM1637.h"
+TM1637_EYEWINK EYEWINK(D8, D9);
+
 /*
 SDBlockDevice blockDevice(PA_7, PA_6, PA_5, PA_8);
 LittleFileSystem fileSystem("fs");
@@ -341,6 +344,7 @@ prim setMsg() {
 //
 prim MBED_addRecord() {
 //    Sl(3);
+
     char *value =(char *)S0;
     char *key = (char *)S1;
     Small *db = (Small *)S2;
@@ -631,3 +635,68 @@ prim P_ms() {
 
     Pop;
 }
+
+// EYEWINK 6 LEDs & 6 Buttons
+
+
+prim LED_cls() {
+    EYEWINK.cls();
+}
+
+prim LED_write() {
+    uint8_t d = (uint8_t) S0;
+    uint8_t a = (uint8_t)S1;
+
+    EYEWINK.writeData(d,a);
+
+    Pop2;
+}
+
+prim LED_type() {
+    char *p = (char *)S0;
+
+    EYEWINK.printf( p );
+
+    Pop;
+}
+
+// Report if a key pressed.
+//
+prim LED_key() {
+    TM1637::KeyData_t keydata;
+
+    EYEWINK.getKeys(&keydata);
+
+    Push = (stackitem) keydata;
+}
+
+prim LED_brightness() {
+    uint8_t bright = (uint8_t)S0;
+
+    EYEWINK.setBrightness(bright & 0x07);
+
+    Pop;
+}
+
+prim LED_on() {
+    EYEWINK.setDisplay(true);
+}
+
+prim LED_off() {
+    EYEWINK.setDisplay(false);
+}
+//
+// Move 'cursor' to position, 0 is extreme left.
+// Stack: n --
+//
+prim LED_locate() {
+    int l = (int) S0;
+    EYEWINK.locate(l);
+
+    Pop;
+}
+
+
+
+
+
