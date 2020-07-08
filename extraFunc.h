@@ -68,6 +68,7 @@ void P_ms();
 // EYEWINK LED display.
 void LED_cls() ;
 void LED_write() ;
+void LED_writeData() ;
 void LED_type() ;
 prim LED_key() ;
 prim LED_brightness() ;
@@ -142,6 +143,8 @@ static struct primfcn cpp_extras[] = {
 
     {(char *)"0LED-CLS", LED_cls},
     {(char *)"0LED-WRITE", LED_write},
+    {(char *)"0LED-WRITE-DATA", LED_writeData},
+
     {(char *)"0LED-TYPE", LED_type},
     {(char *)"0LED-KEY", LED_key},
     {(char *)"0LED-BRIGHT", LED_brightness},

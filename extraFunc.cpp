@@ -652,6 +652,15 @@ prim LED_write() {
     Pop2;
 }
 
+prim LED_writeData() {
+    char *p = (char *)S0;
+
+    EYEWINK.writeData(p);
+
+    Pop;
+
+}
+
 prim LED_type() {
     char *p = (char *)S0;
 

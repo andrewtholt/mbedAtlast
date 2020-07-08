@@ -114,7 +114,7 @@ void ledControlTask(void) {
         count++;
 
         char buffer[32];
-        sprintf(buffer,"%08d",count);
+        sprintf(buffer,"%06d",count);
 
         db->Set("COUNT", buffer);
 
