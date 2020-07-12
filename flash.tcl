@@ -10,5 +10,8 @@ expect "> "
 send "program ./BUILD/NUCLEO_F411RE/GCC_ARM/mbed.elf\n"
 expect "> "
 
+send "reset\n"
+expect "> "
+
 send "exit\n"
 

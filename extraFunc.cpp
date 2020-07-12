@@ -6,6 +6,7 @@
 #include "LittleFileSystem.h"
 #include <stdio.h>
 #include <errno.h>
+#include <iostream>
 
 #include "TM1637/TM1637.h"
 TM1637_EYEWINK EYEWINK(D8, D9);
@@ -46,6 +47,7 @@ extern bool remoteCommand;
 using namespace std;
 
 prim crap() {
+    cout << "Helloo" << endl;
 }
 
 prim P_listDirectory() {
@@ -634,6 +636,10 @@ prim P_ms() {
     ThisThread::sleep_for(delay);
 
     Pop;
+}
+
+prim P_reset() {
+    NVIC_SystemReset();
 }
 
 // EYEWINK 6 LEDs & 6 Buttons

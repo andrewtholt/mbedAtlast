@@ -64,6 +64,7 @@ void P_i2cRead();
 void P_i2cClose();
 
 void P_ms();
+void P_reset();
 
 // EYEWINK LED display.
 void LED_cls() ;
@@ -111,6 +112,8 @@ static struct primfcn cpp_extras[] = {
     {(char *)"0I2C-CLOSE", P_i2cClose},
 
     {(char *)"0MS", P_ms},
+    {(char *)"0RESET", P_reset},
+
     {(char *)"0QDEPTH", taskQdepth},
     //
     // database operations
