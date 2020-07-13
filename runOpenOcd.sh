@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/bin/bash 
 
-set -x 
+set -x
 
-openocd -f /usr/share/openocd/scripts/board/st_nucleo_f4.cfg
+TARGET=./BUILD/NUCLEO_F411RE/GCC_ARM/mbed.elf
+# TARGET=./BUILD/ARCH_MAX/GCC_ARM/mbed.elf
+# TARGET=./BUILD/DISCO_F407VG/GCC_ARM/mbed.elf
 
+gdb-multiarch -x dbg.gdb  $TARGET
