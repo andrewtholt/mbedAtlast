@@ -356,7 +356,7 @@ void parsePacket(const uint8_t *ptr) {
     bzero((char *)value,sizeof(value));
 
     i2cCmd[0] = i2cCmd[1] = 0;
-    i2c->write(0x40,i2cCmd,1);
+//    i2c->write(0x40,i2cCmd,1);
 
     bool valid = false;
     message_t *msg = mpool.calloc();
@@ -388,7 +388,7 @@ void parsePacket(const uint8_t *ptr) {
                 int offset = 1;
 
                 i2cCmd[0] = (uint8_t) offset;
-                i2c->write(0x40,i2cCmd,1);
+//                i2c->write(0x40,i2cCmd,1);
 
                 int destLen = (int)ptr[offset++];
                 strncpy((char *)dest, (char *)&ptr[offset],destLen);
@@ -401,7 +401,7 @@ void parsePacket(const uint8_t *ptr) {
                 offset += keyLen;
 
                 i2cCmd[0] = (uint8_t) offset;
-                i2c->write(0x40,i2cCmd,1);
+//                i2c->write(0x40,i2cCmd,1);
 
                 int valueLen = (int)ptr[offset++];
                 strncpy((char *)value, (char *)&ptr[offset],valueLen);

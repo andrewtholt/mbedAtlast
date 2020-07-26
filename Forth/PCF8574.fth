@@ -4,10 +4,11 @@ variable i2c
 variable init-ran
 0 init-ran !
 
-2 string cmd
+32 constant /cmd
+/cmd string cmd
 
 : i2c-init
-
+    cmd /cmd erase    
     init-ran @ 0= if
         i2c-open i2c !
         -1 init-ran !
@@ -15,7 +16,7 @@ variable init-ran
 ;
 
 : i2c-write-test
-    i2c-init 
+    i2c-init
     cmd c!
 
     i2c-open i2c !
@@ -26,16 +27,16 @@ variable init-ran
 ;
 
 : i2c-read-test
-    i2c-init 
+    i2c-init
     i2c-open i2c !
     cmd 1 0x40 i2c @ i2c-read
     i2c @ i2c-close
 ;
 
 : blink-test
-    i2c-init 
+    i2c-init
 
-    0 do 
+    0 do
         0xaa i2c-write-test
         500 ms
         0x55 i2c-write-test
@@ -59,14 +60,14 @@ variable init-ran
     bar-value + c@
 ;
 
-: bar-set \ vale --
-    bar i2c-write-test 
+: bar-set \ value --
+    bar i2c-write-test
 ;
 
 : bar-test
-    i2c-init 
+    i2c-init
 
-    9 0 do 
+    9 0 do
         i . cr
         i bar-set
 
@@ -74,11 +75,11 @@ variable init-ran
     loop
 ;
 
-\ 
-\ Write 1 to a bit position if you want to use it as an input.  
+\
+\ Write 1 to a bit position if you want to use it as an input.
 \ e.g. All i/p
-\ 
+\
 \ 0xff i2c-write-test
-\ 
+\
 \ i2c-read-test cmd 2 dump
-\ 
+\
